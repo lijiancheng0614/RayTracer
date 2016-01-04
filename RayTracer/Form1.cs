@@ -4,6 +4,7 @@ using RayTracer.Model;
 using RayTracer.Model.Geometries;
 using RayTracer.Model.Materials;
 using System;
+using RayTracer.Model.Lights;
 
 namespace RayTracer
 {
@@ -23,7 +24,7 @@ namespace RayTracer
 
         void renderDepth(Graphics g, int w, int h, int maxDepth = 20)
         {
-            Union scene = new Union();
+            UnionGeometry scene = new UnionGeometry();
             scene.Add(new Sphere(new Vector3(0, 10, -10), 10));
             scene.Add(new Plane(new Vector3(0, 1, 0), 0));
             scene.Initialize();
@@ -61,18 +62,10 @@ namespace RayTracer
 
         void renderMaterial(Graphics g, int w, int h)
         {
-            Plane plane = new Plane(new Vector3(0, 1, 0), 0);
-            plane.Material = new CheckerMaterial(0.1);
-
-            Sphere sphere1 = new Sphere(new Vector3(-10, 10, -10), 10);
-            Sphere sphere2 = new Sphere(new Vector3(10, 10, -10), 10);
-            sphere1.Material = new PhongMaterial(Model.Color.Red, Model.Color.White, 16);
-            sphere2.Material = new PhongMaterial(Model.Color.Blue, Model.Color.White, 16);
-
-            Union scene = new Union();
-            scene.Add(plane);
-            scene.Add(sphere1);
-            scene.Add(sphere2);
+            UnionGeometry scene = new UnionGeometry();
+            scene.Add(new Plane(new Vector3(0, 1, 0), 0, new CheckerMaterial(0.1)));
+            scene.Add(new Sphere(new Vector3(-10, 10, -10), 10, new PhongMaterial(Model.Color.Red, Model.Color.White, 16)));
+            scene.Add(new Sphere(new Vector3(10, 10, -10), 10, new PhongMaterial(Model.Color.Blue, Model.Color.White, 16)));
             scene.Initialize();
 
             PerspectiveCamera camera = new PerspectiveCamera(new Vector3(0, 5, 15), new Vector3(0, 0, -1), new Vector3(0, 1, 0), 90);
@@ -130,16 +123,10 @@ namespace RayTracer
 
         void rayTracing(Graphics g, int w, int h, int maxReflect = 3)
         {
-            Plane plane = new Plane(new Vector3(0, 1, 0), 0);
-            Sphere sphere1 = new Sphere(new Vector3(-10, 10, -10), 10);
-            Sphere sphere2 = new Sphere(new Vector3(10, 10, -10), 10);
-            plane.Material = new CheckerMaterial(0.1, 0.5);
-            sphere1.Material = new PhongMaterial(Model.Color.Red, Model.Color.White, 16, 0.25);
-            sphere2.Material = new PhongMaterial(Model.Color.Blue, Model.Color.White, 16, 0.25);
-            Union scene = new Union();
-            scene.Add(plane);
-            scene.Add(sphere1);
-            scene.Add(sphere2);
+            UnionGeometry scene = new UnionGeometry();
+            scene.Add(new Plane(new Vector3(0, 1, 0), 0, new CheckerMaterial(0.1, 0.5)));
+            scene.Add(new Sphere(new Vector3(-10, 10, -10), 10, new PhongMaterial(Model.Color.Red, Model.Color.White, 16, 0.25)));
+            scene.Add(new Sphere(new Vector3(10, 10, -10), 10, new PhongMaterial(Model.Color.Blue, Model.Color.White, 16, 0.25)));
             scene.Initialize();
 
             PerspectiveCamera camera = new PerspectiveCamera(new Vector3(0, 5, 15), new Vector3(0, 0, -1), new Vector3(0, 1, 0), 90);
@@ -160,6 +147,42 @@ namespace RayTracer
                     Model.Color color = rayTracing(scene, ray, maxReflect);
                     color.Saturate();
                     bitmap.SetPixel(x, y, System.Drawing.Color.FromArgb(255, (int)(color.R * 255), (int)(color.G * 255), (int)(color.B * 255)));
+                }
+            }
+            g.DrawImage(bitmap, startDrawingPoint);
+        }
+
+        void renderLight(Graphics g, int w, int h, UnionLight light)
+        {
+            UnionGeometry scene = new UnionGeometry();
+            scene.Add(new Plane(new Vector3(0, 1, 0), 0));
+            scene.Add(new Plane(new Vector3(0, 0, 1), -50));
+            scene.Add(new Plane(new Vector3(1, 0, 0), -20));
+            scene.Add(new Sphere(new Vector3(0, 10, -10), 10));
+            scene.Initialize();
+
+            PerspectiveCamera camera = new PerspectiveCamera(new Vector3(0, 10, 10), new Vector3(0, 0, -1), new Vector3(0, 1, 0), 90);
+            camera.Initialize();
+
+            light.Initialize();
+
+            double dx = 1.0 / w;
+            double dy = 1.0 / h;
+
+            Bitmap bitmap = new Bitmap(w, h);
+            for (int y = 0; y < h; ++y)
+            {
+                double sy = 1 - dy * y;
+                for (int x = 0; x < w; ++x)
+                {
+                    double sx = dx * x;
+                    var ray = camera.GenerateRay(sx, sy);
+                    var result = scene.Intersect(ray);
+                    if (result.Geometry != null)
+                    {
+                        Model.Color color = light.GetColor(scene, result);
+                        bitmap.SetPixel(x, y, System.Drawing.Color.FromArgb(255, (int)(color.R * 255), (int)(color.G * 255), (int)(color.B * 255)));
+                    }
                 }
             }
             g.DrawImage(bitmap, startDrawingPoint);
@@ -189,13 +212,18 @@ namespace RayTracer
             switch (state)
             {
                 case 1:
-                    rayTracing(g, w, h);
+                    renderDepth(g, w, h);
                     break;
                 case 2:
                     renderMaterial(g, w, h);
                     break;
                 case 3:
-                    renderDepth(g, w, h);
+                    rayTracing(g, w, h);
+                    break;
+                case 4:
+                    UnionLight light = new UnionLight();
+                    light.Add(new DirectionalLight(Model.Color.White, new Vector3(-1.75, -2, -1.5)));
+                    renderLight(g, w, h, light);
                     break;
                 default:
                     break;

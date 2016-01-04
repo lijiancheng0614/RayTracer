@@ -37,8 +37,8 @@ namespace RayTracer.Model
         {
             geometry = null;
             distance = 0;
-            position = Vector3.Zero();
-            normal = Vector3.Zero();
+            position = Vector3.Zero;
+            normal = Vector3.Zero;
         }
         public static IntersectResult NoHit()
         {

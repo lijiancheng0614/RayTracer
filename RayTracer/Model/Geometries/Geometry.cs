@@ -11,6 +11,11 @@ namespace RayTracer.Model.Geometries
             get { return material; }
             set { material = value; }
         }
+
+        public Geometry(Material _material = null)
+        {
+            material = _material;
+        }
         public virtual void Initialize()
         {
         }

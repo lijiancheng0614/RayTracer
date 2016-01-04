@@ -1,4 +1,5 @@
 ﻿using System;
+using RayTracer.Model.Materials;
 
 namespace RayTracer.Model.Geometries
 {
@@ -7,15 +8,11 @@ namespace RayTracer.Model.Geometries
         Vector3 center;
         double radius;
 
-        public Sphere(Vector3 _center, double _radius)
+        public Sphere(Vector3 _center, double _radius, Material _material = null)
+            : base(_material)
         {
             center = _center;
             radius = _radius;
-        }
-        public Sphere(Sphere s)
-        {
-            center = s.center;
-            radius = s.radius;
         }
         public double SqrRadius()
         {

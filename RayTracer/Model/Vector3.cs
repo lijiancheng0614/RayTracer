@@ -81,9 +81,12 @@ namespace RayTracer.Model
             return new Vector3(-z * v.y + y * v.z, z * v.x - x * v.z, -y * v.x + x * v.y);
         }
 
-        public static Vector3 Zero()
+        public static Vector3 Zero
         {
-            return new Vector3(0, 0, 0);
+            get
+            {
+                return new Vector3(0, 0, 0);
+            }
         }
     }
 }

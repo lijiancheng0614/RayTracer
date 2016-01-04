@@ -18,8 +18,8 @@ namespace RayTracer.Model
             front = _front;
             refUp = _refUp;
             fov = _fov;
-            right = Vector3.Zero();
-            up = Vector3.Zero();
+            right = Vector3.Zero;
+            up = Vector3.Zero;
             fovScale = 0;
         }
         public void Initialize()

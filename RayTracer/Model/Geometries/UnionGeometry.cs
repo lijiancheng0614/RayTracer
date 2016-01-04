@@ -2,11 +2,11 @@
 
 namespace RayTracer.Model.Geometries
 {
-    class Union : Geometry
+    class UnionGeometry : Geometry
     {
         List<Geometry> geometries;
 
-        public Union()
+        public UnionGeometry()
         {
             geometries = new List<Geometry>();
         }

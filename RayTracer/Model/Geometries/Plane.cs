@@ -1,4 +1,5 @@
-﻿
+﻿using RayTracer.Model.Materials;
+
 namespace RayTracer.Model.Geometries
 {
     class Plane : Geometry
@@ -7,17 +8,12 @@ namespace RayTracer.Model.Geometries
         double d;
         Vector3 position;
 
-        public Plane(Vector3 _normal, double _d)
+        public Plane(Vector3 _normal, double _d, Material _material = null)
+            : base(_material)
         {
             normal = _normal;
             d = _d;
-            position = Vector3.Zero();
-        }
-        public Plane(Plane p)
-        {
-            normal = p.normal;
-            d = p.d;
-            position = Vector3.Zero();
+            position = Vector3.Zero;
         }
         public override void Initialize()
         {
