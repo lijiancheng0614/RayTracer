@@ -90,7 +90,8 @@
             "renderMaterial",
             "rayTracing",
             "renderLight_DirectionalLight",
-            "renderLight_PointLight"});
+            "renderLight_PointLight",
+            "renderLight_SpotLight"});
             this.comboBox1.Location = new System.Drawing.Point(14, 37);
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(151, 20);

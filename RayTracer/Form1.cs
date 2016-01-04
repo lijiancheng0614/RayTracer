@@ -230,6 +230,11 @@ namespace RayTracer
                     light5.Add(new PointLight(Model.Color.White.Multiply(2000), new Vector3(30, 40, 20)));
                     renderLight(g, w, h, light5);
                     break;
+                case 6:
+                    UnionLight light6 = new UnionLight();
+                    light6.Add(new SpotLight(Model.Color.White.Multiply(2000), new Vector3(30, 40, 20), new Vector3(-1, -1, -1), 20, 30, 0.5));
+                    renderLight(g, w, h, light6);
+                    break;
                 default:
                     break;
             }
