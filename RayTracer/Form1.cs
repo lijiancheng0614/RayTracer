@@ -209,6 +209,7 @@ namespace RayTracer
                 return;
             }
             state = comboBox1.SelectedIndex + 1;
+            DateTime startDateTime = DateTime.Now;
             switch (state)
             {
                 case 1:
@@ -235,9 +236,27 @@ namespace RayTracer
                     light6.Add(new SpotLight(Model.Color.White.Multiply(2000), new Vector3(30, 40, 20), new Vector3(-1, -1, -1), 20, 30, 0.5));
                     renderLight(g, w, h, light6);
                     break;
+                case 7:
+                    UnionLight light7 = new UnionLight();
+                    light7.Add(new PointLight(Model.Color.White.Multiply(1000), new Vector3(30, 40, 20)));
+                    light7.Add(new SpotLight(Model.Color.Red.Multiply(3000), new Vector3(0, 30, 10), new Vector3(0, -1, -1), 20, 30, 1));
+                    light7.Add(new SpotLight(Model.Color.Green.Multiply(3000), new Vector3(6, 30, 20), new Vector3(0, -1, -1), 20, 30, 1));
+                    light7.Add(new SpotLight(Model.Color.Blue.Multiply(3000), new Vector3(-6, 30, 20), new Vector3(0, -1, -1), 20, 30, 1));
+                    renderLight(g, w, h, light7);
+                    break;
+                case 8:
+                    UnionLight light8 = new UnionLight();
+                    for (int x = 10; x <= 30; x += 4)
+                        for (int z = 20; z <= 40; z += 4)
+                            light8.Add(new PointLight(Model.Color.White.Multiply(80), new Vector3(x, 50, z)));
+                    DirectionalLight fillLight = new DirectionalLight(Model.Color.White.Multiply(0.25), new Vector3(1.5, 1, 0.5), false);
+                    light8.Add(fillLight);
+                    renderLight(g, w, h, light8);
+                    break;
                 default:
                     break;
             }
+            label2.Text = "Done in " + (DateTime.Now - startDateTime).TotalSeconds.ToString() + " s.";
         }
 
         private void button2_Click(object sender, System.EventArgs e)
