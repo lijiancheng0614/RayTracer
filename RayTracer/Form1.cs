@@ -181,6 +181,7 @@ namespace RayTracer
                     if (result.Geometry != null)
                     {
                         Model.Color color = light.GetColor(scene, result);
+                        color.Saturate();
                         bitmap.SetPixel(x, y, System.Drawing.Color.FromArgb(255, (int)(color.R * 255), (int)(color.G * 255), (int)(color.B * 255)));
                     }
                 }
@@ -190,7 +191,6 @@ namespace RayTracer
 
         private void button1_Click(object sender, System.EventArgs e)
         {
-            label2.Text = "Drawing...";
             int w;
             int h;
             try
@@ -221,14 +221,18 @@ namespace RayTracer
                     rayTracing(g, w, h);
                     break;
                 case 4:
-                    UnionLight light = new UnionLight();
-                    light.Add(new DirectionalLight(Model.Color.White, new Vector3(-1.75, -2, -1.5)));
-                    renderLight(g, w, h, light);
+                    UnionLight light4 = new UnionLight();
+                    light4.Add(new DirectionalLight(Model.Color.White, new Vector3(-1.75, -2, -1.5)));
+                    renderLight(g, w, h, light4);
+                    break;
+                case 5:
+                    UnionLight light5 = new UnionLight();
+                    light5.Add(new PointLight(Model.Color.White.Multiply(2000), new Vector3(30, 40, 20)));
+                    renderLight(g, w, h, light5);
                     break;
                 default:
                     break;
             }
-            label2.Text = "Done.";
         }
 
         private void button2_Click(object sender, System.EventArgs e)

@@ -6,18 +6,13 @@ namespace RayTracer.Model.Lights
     {
         Vector3 l;
         Color irradiance;
-        Vector3 direction;
         bool shadow;
 
         public DirectionalLight(Color _irradiance, Vector3 _direction, bool _shadow = true)
         {
             irradiance = _irradiance;
-            direction = _direction;
+            l = _direction.Normalize().Negate();
             shadow = _shadow;
-        }
-        public override void Initialize()
-        {
-            l = direction.Normalize().Negate();
         }
         public override LightSample Sample(Geometry scene, Vector3 position)
         {

@@ -55,6 +55,7 @@
     <Compile Include="Model\Lights\DirectionalLight.cs" />
     <Compile Include="Model\Lights\Light.cs" />
     <Compile Include="Model\Lights\LightSample.cs" />
+    <Compile Include="Model\Lights\PointLight.cs" />
     <Compile Include="Model\Lights\UnionLight.cs" />
     <Compile Include="Model\Materials\CheckerMaterial.cs" />
     <Compile Include="Model\Color.cs" />
