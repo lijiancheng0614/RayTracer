@@ -5,6 +5,11 @@ namespace RayTracer.Model.Materials
     {
         double reflectiveness;
 
+        public double Reflectiveness
+        {
+            get { return reflectiveness; }
+        }
+
         public Material(double _reflectiveness = 0)
         {
             reflectiveness = _reflectiveness;
