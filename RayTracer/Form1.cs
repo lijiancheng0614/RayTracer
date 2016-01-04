@@ -15,6 +15,7 @@ namespace RayTracer
         public Form1()
         {
             InitializeComponent();
+            comboBox1.SelectedIndex = 0;
         }
 
         protected override void OnPaint(PaintEventArgs e)
@@ -23,6 +24,9 @@ namespace RayTracer
             switch (state)
             {
                 case 1:
+                    renderMaterial(e.Graphics, int.Parse(textBox1.Text), int.Parse(textBox2.Text));
+                    break;
+                case 2:
                     renderDepth(e.Graphics, int.Parse(textBox1.Text), int.Parse(textBox2.Text));
                     break;
                 default:
@@ -69,6 +73,54 @@ namespace RayTracer
             g.DrawImage(bitmap, startDrawingPoint);
         }
 
+        void renderMaterial(Graphics g, int w, int h)
+        {
+            Plane plane = new Plane(new Vector3(0, 1, 0), 0);
+            plane.Material = new CheckerMaterial(0.1);
+
+            Sphere sphere1 = new Sphere(new Vector3(-10, 10, -10), 10);
+            Sphere sphere2 = new Sphere(new Vector3(10, 10, -10), 10);
+            sphere1.Material = new PhongMaterial(Model.Color.Red, Model.Color.White, 16);
+            sphere2.Material = new PhongMaterial(Model.Color.Blue, Model.Color.White, 16);
+
+            Union scene = new Union();
+            scene.Add(plane);
+            scene.Add(sphere1);
+            scene.Add(sphere2);
+            scene.Initialize();
+
+            PerspectiveCamera camera = new PerspectiveCamera(new Vector3(0, 5, 15), new Vector3(0, 0, -1), new Vector3(0, 1, 0), 90);
+            camera.Initialize();
+
+            double dx = 1.0 / w;
+            double dy = 1.0 / h;
+
+            Bitmap bitmap = new Bitmap(w, h);
+
+            for (int y = 0; y < h; ++y)
+            {
+                double sy = 1 - dy * y;
+                for (int x = 0; x < w; ++x)
+                {
+                    double sx = dx * x;
+                    Ray3 ray = new Ray3(camera.GenerateRay(sx, sy));
+                    IntersectResult result = scene.Intersect(ray);
+                    if (result.Geometry != null)
+                    {
+                        Model.Color color = result.Geometry.Material.Sample(ray, result.Position, result.Normal);
+                        color.Saturate();
+                        bitmap.SetPixel(x, y, System.Drawing.Color.FromArgb(255, (int)(color.R * 255), (int)(color.G * 255), (int)(color.B * 255)));
+                    }
+                    else
+                    {
+                        bitmap.SetPixel(x, y, System.Drawing.Color.Black);
+                    }
+                }
+            }
+
+            g.DrawImage(bitmap, startDrawingPoint);
+        }
+
         private void button1_Click(object sender, System.EventArgs e)
         {
             int w;
@@ -82,7 +134,7 @@ namespace RayTracer
             {
                 MessageBox.Show("请输入整数的宽高！");
             }
-            state = 1;
+            state = comboBox1.SelectedIndex + 1;
             this.Invalidate();
         }
 

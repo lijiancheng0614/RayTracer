@@ -11,7 +11,7 @@ namespace RayTracer.Model.Materials
         }
         public virtual Color Sample(Ray3 ray, Vector3 position, Vector3 normal)
         {
-            return Color.White;
+            return Color.Black;
         }
     }
 }
