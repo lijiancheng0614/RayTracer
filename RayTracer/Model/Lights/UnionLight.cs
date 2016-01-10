@@ -24,21 +24,18 @@ namespace RayTracer.Model.Lights
         {
             lights.Clear();
         }
-        public Color GetColor(Geometry scene, IntersectResult result)
+        public List<LightSample> GetLightSample(Geometry geometry, Vector3 position)
         {
-            Color color = Color.Black;
+            List<LightSample> list = new List<LightSample>();
             for (int i = 0; i < lights.Count; ++i)
             {
-                LightSample lightSample = lights[i].Sample(scene, result.Position);
-
+                LightSample lightSample = lights[i].Sample(geometry, position);
                 if (lightSample != LightSample.Zero)
                 {
-                    var NdotL = result.Normal.Dot(lightSample.L);
-                    if (NdotL >= 0)
-                        color = color.Add(lightSample.Irradiance.Multiply(NdotL));
+                    list.Add(lightSample);
                 }
             }
-            return color;
+            return list;
         }
     }
 }

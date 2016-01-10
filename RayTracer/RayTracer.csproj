@@ -52,6 +52,7 @@
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
+    <Compile Include="Config.cs" />
     <Compile Include="Model\Lights\DirectionalLight.cs" />
     <Compile Include="Model\Lights\Light.cs" />
     <Compile Include="Model\Lights\LightSample.cs" />
@@ -69,6 +70,7 @@
     <Compile Include="Model\Ray3.cs" />
     <Compile Include="Model\Geometries\Sphere.cs" />
     <Compile Include="Model\Geometries\UnionGeometry.cs" />
+    <Compile Include="Model\Scene.cs" />
     <Compile Include="Model\Vector3.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

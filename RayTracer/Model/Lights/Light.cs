@@ -1,5 +1,4 @@
-﻿using RayTracer.Model.Materials;
-using RayTracer.Model.Geometries;
+﻿using RayTracer.Model.Geometries;
 
 namespace RayTracer.Model.Lights
 {
@@ -8,7 +7,7 @@ namespace RayTracer.Model.Lights
         public virtual void Initialize()
         {
         }
-        public virtual LightSample Sample(Geometry scene, Vector3 position)
+        public virtual LightSample Sample(Geometry geometry, Vector3 position)
         {
             return LightSample.Zero;
         }

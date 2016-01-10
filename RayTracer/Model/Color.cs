@@ -43,9 +43,14 @@ namespace RayTracer.Model
         }
         public void Saturate()
         {
-            r = Math.Min(r, 1);
-            g = Math.Min(g, 1);
-            b = Math.Min(b, 1);
+            r = Math.Max(Math.Min(r, 1), 0);
+            g = Math.Max(Math.Min(g, 1), 0);
+            b = Math.Max(Math.Min(b, 1), 0);
+        }
+        public System.Drawing.Color GetSystemColor()
+        {
+            this.Saturate();
+            return System.Drawing.Color.FromArgb(255, (int)(R * 255), (int)(G * 255), (int)(B * 255));
         }
 
         public static Color Black

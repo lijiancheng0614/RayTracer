@@ -87,14 +87,14 @@
             this.comboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBox1.FormattingEnabled = true;
             this.comboBox1.Items.AddRange(new object[] {
-            "renderDepth",
-            "renderMaterial",
-            "rayTracing",
-            "renderLight_DirectionalLight",
-            "renderLight_PointLight",
-            "renderLight_SpotLight",
-            "renderLight_Trichromatism",
-            "renderLight_ManyLight"});
+            "TestDepth",
+            "TestMaterial",
+            "TestRayTracing",
+            "TestDirectionalLight",
+            "TestPointLight",
+            "TestSpotLight",
+            "TestTrichromatismLights",
+            "TestManyLights"});
             this.comboBox1.Location = new System.Drawing.Point(14, 37);
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(151, 20);

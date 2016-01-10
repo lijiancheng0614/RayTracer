@@ -9,7 +9,6 @@ namespace RayTracer.Model.Geometries
         public Material Material
         {
             get { return material; }
-            set { material = value; }
         }
 
         public Geometry(Material _material = null)
@@ -19,7 +18,8 @@ namespace RayTracer.Model.Geometries
         public virtual void Initialize()
         {
         }
-        public virtual IntersectResult Intersect(Ray3 ray) {
+        public virtual IntersectResult Intersect(Ray3 ray)
+        {
             return IntersectResult.NoHit();
         }
     }

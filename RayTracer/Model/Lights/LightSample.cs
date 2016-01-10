@@ -6,11 +6,11 @@ namespace RayTracer.Model.Lights
         /// <summary>
         /// light vector
         /// </summary>
-        Vector3 l;
+        Vector3 vector;
 
-        internal Vector3 L
+        public Vector3 Vector
         {
-            get { return l; }
+            get { return vector; }
         }
 
         /// <summary>
@@ -18,18 +18,19 @@ namespace RayTracer.Model.Lights
         /// </summary>
         Color irradiance;
 
-        internal Color Irradiance
+        public Color Irradiance
         {
             get { return irradiance; }
         }
 
-        public LightSample(Vector3 _l, Color _irradiance)
+        public LightSample(Vector3 _vector, Color _irradiance)
         {
-            l = _l;
+            vector = _vector;
             irradiance = _irradiance;
         }
 
-        public static LightSample Zero{
+        public static LightSample Zero
+        {
             get
             {
                 return new LightSample(Vector3.Zero, Color.Black);

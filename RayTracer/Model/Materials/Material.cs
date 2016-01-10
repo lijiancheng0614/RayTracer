@@ -1,4 +1,5 @@
-﻿
+﻿using RayTracer.Model.Lights;
+
 namespace RayTracer.Model.Materials
 {
     class Material
@@ -14,7 +15,7 @@ namespace RayTracer.Model.Materials
         {
             reflectiveness = _reflectiveness;
         }
-        public virtual Color Sample(Ray3 ray, Vector3 position, Vector3 normal)
+        public virtual Color Sample(Ray3 ray, Vector3 normal, Vector3 position, LightSample lightSample)
         {
             return Color.Black;
         }

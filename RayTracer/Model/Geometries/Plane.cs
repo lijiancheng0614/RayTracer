@@ -25,12 +25,8 @@ namespace RayTracer.Model.Geometries
             if (a >= 0)
                 return IntersectResult.NoHit();
             double b = normal.Dot(ray.Origin.Subtract(position));
-            IntersectResult result = new IntersectResult();
-            result.Geometry = this;
-            result.Distance = -b / a;
-            result.Position = ray.GetPoint(result.Distance);
-            result.Normal = normal;
-            return result;
+            double distance = -b / a;
+            return new IntersectResult(this, distance, ray.GetPoint(distance), normal);
         }
     }
 }

@@ -15,7 +15,7 @@ namespace RayTracer.Model.Lights
             position = _position;
             shadow = _shadow;
         }
-        public override LightSample Sample(Geometry scene, Vector3 position)
+        public override LightSample Sample(Geometry geometry, Vector3 position)
         {
             Vector3 delta = this.position.Subtract(position);
             double rr = delta.SqrLength();
@@ -24,7 +24,7 @@ namespace RayTracer.Model.Lights
             if (shadow)
             {
                 var shadowRay = new Ray3(position, l);
-                var shadowResult = scene.Intersect(shadowRay);
+                var shadowResult = geometry.Intersect(shadowRay);
                 if (shadowResult.Geometry != null && shadowResult.Distance <= r)
                     return LightSample.Zero;
             }

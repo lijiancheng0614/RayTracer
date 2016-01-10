@@ -1,12 +1,10 @@
 ﻿using System;
+using RayTracer.Model.Lights;
 
 namespace RayTracer.Model.Materials
 {
     class PhongMaterial : Material
     {
-        static Vector3 lightDirection = new Vector3(1, 1, 1).Normalize();
-        static Color lightColor = Color.White;
-
         Color diffuse;
         Color specular;
         double shininess;
@@ -18,14 +16,16 @@ namespace RayTracer.Model.Materials
             specular = _specular;
             shininess = _shininess;
         }
-        public override Color Sample(Ray3 ray, Vector3 position, Vector3 normal)
+        public override Color Sample(Ray3 ray, Vector3 normal, Vector3 position, LightSample lightSample)
         {
-            double NdotL = normal.Dot(lightDirection);
-            Vector3 H = (lightDirection.Subtract(ray.Direction)).Normalize();
+            Color color = Color.Black;
+            double NdotL = normal.Dot(lightSample.Vector);
+            Vector3 H = (lightSample.Vector.Subtract(ray.Direction)).Normalize();
             double NdotH = normal.Dot(H);
             Color diffuseTerm = diffuse.Multiply(Math.Max(NdotL, 0));
             Color specularTerm = specular.Multiply(Math.Pow(Math.Max(NdotH, 0), shininess));
-            return lightColor.Modulate(diffuseTerm.Add(specularTerm));
+            color = lightSample.Irradiance.Modulate(diffuseTerm.Add(specularTerm));
+            return color;
         }
     }
 }

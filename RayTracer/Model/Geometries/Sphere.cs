@@ -28,11 +28,9 @@ namespace RayTracer.Model.Geometries
                 double discr = DdotV * DdotV - a0;
                 if (discr >= 0)
                 {
-                    IntersectResult result = new IntersectResult();
-                    result.Geometry = this;
-                    result.Distance = -DdotV - Math.Sqrt(discr);
-                    result.Position = ray.GetPoint(result.Distance);
-                    result.Normal = result.Position.Subtract(center).Normalize();
+                    double distance = -DdotV - Math.Sqrt(discr);
+                    Vector3 position = ray.GetPoint(distance);
+                    IntersectResult result = new IntersectResult(this, distance, position, position.Subtract(center).Normalize());
                     return result;
                 }
             }
