@@ -64,6 +64,13 @@
     <Compile Include="Model\Geometries\Geometry.cs" />
     <Compile Include="Model\Materials\Material.cs" />
     <Compile Include="Model\IntersectResult.cs" />
+    <Compile Include="Model\ObjModels\Face.cs" />
+    <Compile Include="Model\ObjModels\FaceItem.cs" />
+    <Compile Include="Model\ObjModels\ImageTexture.cs" />
+    <Compile Include="Model\ObjModels\Material.cs" />
+    <Compile Include="Model\ObjModels\ObjModel.cs" />
+    <Compile Include="Model\ObjModels\Object.cs" />
+    <Compile Include="Model\ObjModels\Texture.cs" />
     <Compile Include="Model\PerspectiveCamera.cs" />
     <Compile Include="Model\Materials\PhongMaterial.cs" />
     <Compile Include="Model\Geometries\Plane.cs" />

@@ -9,21 +9,18 @@ namespace RayTracer.Model
         public double X
         {
             get { return x; }
-            set { x = value; }
         }
         double y;
 
         public double Y
         {
             get { return y; }
-            set { y = value; }
         }
         double z;
 
         public double Z
         {
             get { return z; }
-            set { z = value; }
         }
 
         public Vector3(double _x, double _y, double _z)
