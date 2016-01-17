@@ -3,6 +3,7 @@ using RayTracer.Model;
 using RayTracer.Model.Geometries;
 using RayTracer.Model.Lights;
 using RayTracer.Model.Materials;
+using RayTracer.Model.ObjModels;
 
 namespace RayTracer
 {
@@ -122,6 +123,23 @@ namespace RayTracer
             DirectionalLight fillLight = new DirectionalLight(Model.Color.White.Multiply(0.25), new Vector3(1.5, 1, 0.5), false);
             lights.Add(fillLight);
             Scene scene = new Scene(DefaultGeometries, lights, DefaultCamera);
+            scene.Initialize();
+            return scene.GetSystemBitmap(width, height);
+        }
+
+        public static Bitmap GetObjModelBitmap(int width, int height)
+        {
+            UnionGeometry geometries = new UnionGeometry();
+            ObjModel objModel = new ObjModel("models/dinosaur.2k.obj");
+            foreach (var triangle in objModel.Triangles)
+            {
+                geometries.Add(triangle);
+            }
+            Vector3 eye = new Vector3(-186.231323, -86.534691, 38.299175);
+            Vector3 front = new Vector3(0.906127, 0.375330, -0.195090);
+            Vector3 up = new Vector3(0.180237, 0.074646, 0.980787);
+            PerspectiveCamera camera = new PerspectiveCamera(eye, front, up, 30);
+            Scene scene = new Scene(geometries, DefaultLight, camera);
             scene.Initialize();
             return scene.GetSystemBitmap(width, height);
         }

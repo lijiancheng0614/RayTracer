@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using RayTracer.Model.Geometries;
 
 namespace RayTracer.Model.ObjModels
 {
@@ -11,17 +12,193 @@ namespace RayTracer.Model.ObjModels
     /// </summary>
     class ObjModel
     {
+        List<Triangle> triangles = new List<Triangle>();
+
+        public List<Triangle> Triangles
+        {
+            get { return triangles; }
+        }
+
         List<Vector3> vertices = new List<Vector3>();
         List<Texture> textures = new List<Texture>();
         List<Vector3> normals = new List<Vector3>();
         Dictionary<string, Object> objects = new Dictionary<string, Object>();
         Dictionary<string, Material> materials = new Dictionary<string, Material>();
+        Materials.PhongMaterial defaultMaterial = new Materials.PhongMaterial(Model.Color.White, Model.Color.Black, 0);
+
+        public ObjModel(string objModelPath)
+        {
+            Load(objModelPath);
+            GetTriangles();
+        }
+
+        /// <summary>
+        /// Load an obj file.
+        /// </summary>
+        /// <param name="objModelPath">obj file path.</param>
+        private void Load(string objModelPath)
+        {
+            if (!File.Exists(objModelPath))
+            {
+                throw new ArgumentException("File not found!", objModelPath);
+            }
+
+            string objModelFolder = Path.GetDirectoryName(objModelPath) ?? string.Empty;
+            string line = null;
+            string lastObjectName = null;
+            string lastObjectMaterial = null;
+            var streamReader = new StreamReader(objModelPath);
+
+            while ((line = streamReader.ReadLine()) != null)
+            {
+                if (string.IsNullOrWhiteSpace(line) || line[0] == '#')
+                {
+                    continue;
+                }
+                line = line.Trim();
+                string[] s = Regex.Split(line, "\\s+");
+                if (s.Length < 2)
+                {
+                    Console.WriteLine("No arguments for this line: " + line + ".");
+                    continue;
+                }
+                if (s[0] == "v" && s.Length >= 4)
+                {
+                    #region vertex
+                    double x, y, z;
+                    if (double.TryParse(s[1], out x) && double.TryParse(s[2], out y) && double.TryParse(s[3], out z))
+                    {
+                        vertices.Add(new Vector3(x, y, z));
+                    }
+                    else
+                    {
+                        Console.WriteLine("Cannot parse vertex line: " + line + ".");
+                    }
+                    #endregion
+                }
+                else if (s[0] == "vn" && s.Length >= 4)
+                {
+                    #region normal
+                    double x, y, z;
+                    if (double.TryParse(s[1], out x) && double.TryParse(s[2], out y) && double.TryParse(s[3], out z))
+                    {
+                        normals.Add(new Vector3(x, y, z));
+                    }
+                    else
+                    {
+                        Console.WriteLine("Cannot parse normal line: " + line + ".");
+                    }
+                    #endregion
+                }
+                else if (s[0] == "vt" && s.Length >= 3)
+                {
+                    #region texture
+                    double x, y;
+                    if (double.TryParse(s[1], out x) && double.TryParse(s[2], out y))
+                    {
+                        textures.Add(new Texture(x, y));
+                    }
+                    else
+                    {
+                        Console.WriteLine("Cannot parse texture line: " + line + ".");
+                    }
+                    #endregion
+                }
+                else if (s[0] == "vp" && s.Length >= 2)
+                {
+                    // TODO: parameter space vertex
+                }
+                else if (s[0] == "f")
+                {
+                    #region face
+                    if (objects.Count == 0)
+                    {
+                        objects["Untitled"] = new Object("Untitled");
+                        lastObjectName = "Untitled";
+                    }
+                    Face face = new Face(lastObjectMaterial);
+                    foreach (var i in s.Skip(1))
+                    {
+                        string[] tokens = i.Split(new char[] { '/' }, StringSplitOptions.None);
+                        if (tokens.Length == 0)
+                        {
+                            Console.WriteLine("Cannot found vertex in face line: " + line + ".");
+                            continue;
+                        }
+                        int vertexIndex = 0, textureIndex = 0, normalIndex = 0;
+                        if (string.IsNullOrWhiteSpace(tokens[0]) || !int.TryParse(tokens[0], out vertexIndex))
+                        {
+                            Console.WriteLine("Cannot parse face line: " + line + ".");
+                            continue;
+                        }
+                        if (tokens.Length >= 2 && !string.IsNullOrWhiteSpace(tokens[1]))
+                        {
+                            if (!int.TryParse(tokens[1], out textureIndex))
+                            {
+                                Console.WriteLine("Cannot parse textureIndex in face line: " + line + ".");
+                            }
+                        }
+                        if (tokens.Length >= 3 && !string.IsNullOrWhiteSpace(tokens[2]))
+                        {
+                            if (!int.TryParse(tokens[2], out normalIndex))
+                            {
+                                Console.WriteLine("Cannot parse normalIndex in face line: " + line + ".");
+                            }
+                        }
+                        face.FaceItems.Add(new FaceItem(vertexIndex - 1, textureIndex - 1, normalIndex - 1));
+                    }
+                    objects[lastObjectName].Faces.Add(face);
+                    #endregion
+                }
+                else if (s[0] == "o" && s.Length >= 2)
+                {
+                    #region object
+                    string objectName = string.Join(" ", s.Skip(1));
+                    objects[objectName] = new Object(objectName);
+                    lastObjectName = objectName;
+                    #endregion
+                }
+                else if (s[0] == "mtllib" && s.Length >= 2)
+                {
+                    #region load material
+                    string materialFileName = string.Join(" ", s.Skip(1));
+                    LoadMaterial(Path.Combine(objModelFolder, materialFileName));
+                    #endregion
+                }
+                else if (s[0] == "usemtl" && s.Length >= 2)
+                {
+                    #region use material
+                    string materialName = string.Join(" ", s.Skip(1));
+                    if (materials.ContainsKey(materialName))
+                    {
+                        lastObjectMaterial = materialName;
+                    }
+                    else
+                    {
+                        Console.WriteLine("Cannot find the material: " + materialName + ".");
+                    }
+                    #endregion
+                }
+                else if (s[0] == "g")
+                {
+                    // TODO: group
+                }
+                else if (s[0] == "s")
+                {
+                    // TODO: smoothness
+                }
+                else
+                {
+                    Console.WriteLine("Unknown line: " + line + "\n");
+                }
+            }
+        }
 
         /// <summary>
         /// Load an mtl file.
         /// </summary>
         /// <param name="objMaterialPath">mtl file path.</param>
-        public void LoadMaterial(string objMaterialPath)
+        private void LoadMaterial(string objMaterialPath)
         {
             if (!File.Exists(objMaterialPath))
             {
@@ -68,7 +245,7 @@ namespace RayTracer.Model.ObjModels
                     }
                     Material material = materials[lastMaterialName];
                     double r, g, b;
-                    if (double.TryParse(s[1], out r) && !double.TryParse(s[2], out g) && !double.TryParse(s[3], out b))
+                    if (double.TryParse(s[1], out r) && double.TryParse(s[2], out g) && double.TryParse(s[3], out b))
                     {
                         if (s[0] == "Ka")
                         {
@@ -184,164 +361,39 @@ namespace RayTracer.Model.ObjModels
             }
         }
 
-        /// <summary>
-        /// Load an obj file.
-        /// </summary>
-        /// <param name="objModelPath">obj file path.</param>
-        public void Load(string objModelPath)
+        private void GetTriangles()
         {
-            if (!File.Exists(objModelPath))
+            foreach (Object o in objects.Values)
             {
-                throw new ArgumentException("File not found!", objModelPath);
-            }
-
-            string objModelFolder = Path.GetDirectoryName(objModelPath) ?? string.Empty;
-            string line = null;
-            string lastObjectName = null;
-            string lastObjectMaterial = null;
-            var streamReader = new StreamReader(objModelPath);
-
-            while ((line = streamReader.ReadLine()) != null)
-            {
-                if (string.IsNullOrWhiteSpace(line) || line[0] == '#')
+                foreach (Face face in o.Faces)
                 {
-                    continue;
-                }
-                line = line.Trim();
-                string[] s = Regex.Split(line, "\\s+");
-                if (s.Length < 2)
-                {
-                    Console.WriteLine("No arguments for this line: " + line + ".");
-                    continue;
-                }
-                if (s[0] == "v" && s.Length >= 4)
-                {
-                    #region vertex
-                    double x, y, z;
-                    if (double.TryParse(s[1], out x) && !double.TryParse(s[2], out y) && !double.TryParse(s[3], out z))
+                    if (face.FaceItems.Count == 3)
                     {
-                        vertices.Add(new Vector3(x, y, z));
+                        Vector3 a = vertices[face.FaceItems[0].VertexIndex];
+                        Vector3 b = vertices[face.FaceItems[1].VertexIndex];
+                        Vector3 c = vertices[face.FaceItems[2].VertexIndex];
+                        int n1Index = face.FaceItems[0].NormalIndex;
+                        int n2Index = face.FaceItems[1].NormalIndex;
+                        int n3Index = face.FaceItems[2].NormalIndex;
+                        Triangle triangle;
+                        if (n1Index >= 0 && n2Index >= 0 && n3Index >= 0)
+                        {
+                            Vector3 n1 = normals[n1Index];
+                            Vector3 n2 = normals[n2Index];
+                            Vector3 n3 = normals[n3Index];
+                            triangle = new Triangle(a, n1, b, n2, c, n3, defaultMaterial);
+                            // materials[face.MaterialName]
+                        }
+                        else
+                        {
+                            triangle = new Triangle(a, b, c, defaultMaterial);
+                        }
+                        triangles.Add(triangle);
                     }
                     else
                     {
-                        Console.WriteLine("Cannot parse vertex line: " + line + ".");
+                        Console.WriteLine("Not a triangle face.");
                     }
-                    #endregion
-                }
-                else if (s[0] == "vn" && s.Length >= 4)
-                {
-                    #region normal
-                    double x, y, z;
-                    if (double.TryParse(s[1], out x) && !double.TryParse(s[2], out y) && !double.TryParse(s[3], out z))
-                    {
-                        normals.Add(new Vector3(x, y, z));
-                    }
-                    else
-                    {
-                        Console.WriteLine("Cannot parse normal line: " + line + ".");
-                    }
-                    #endregion
-                }
-                else if (s[0] == "vt" && s.Length >= 3)
-                {
-                    #region texture
-                    double x, y;
-                    if (double.TryParse(s[1], out x) && !double.TryParse(s[2], out y))
-                    {
-                        textures.Add(new Texture(x, y));
-                    }
-                    else
-                    {
-                        Console.WriteLine("Cannot parse texture line: " + line + ".");
-                    }
-                    #endregion
-                }
-                else if (s[0] == "vp" && s.Length >= 2)
-                {
-                    // TODO: parameter space vertex
-                }
-                else if (s[0] == "f")
-                {
-                    #region face
-                    if (objects.Count == 0)
-                    {
-                        objects["Untitled"] = new Object("Untitled");
-                        lastObjectName = "Untitled";
-                    }
-                    Face face = new Face(lastObjectMaterial);
-                    foreach (var i in s)
-                    {
-                        string[] tokens = i.Split(new char[] { '/' }, StringSplitOptions.None);
-                        if (tokens.Length == 0)
-                        {
-                            Console.WriteLine("Cannot found vertex in face line: " + line + ".");
-                            continue;
-                        }
-                        int vertexIndex = 0, textureIndex = 0, normalIndex = 0;
-                        if (string.IsNullOrWhiteSpace(tokens[0]) || int.TryParse(tokens[0], out vertexIndex))
-                        {
-                            Console.WriteLine("Cannot parse face line: " + line + ".");
-                            continue;
-                        }
-                        if (tokens.Length >= 2 && !string.IsNullOrWhiteSpace(tokens[1]))
-                        {
-                            if (!int.TryParse(tokens[1], out textureIndex))
-                            {
-                                Console.WriteLine("Cannot parse textureIndex in face line: " + line + ".");
-                            }
-                        }
-                        if (tokens.Length >= 3 && !string.IsNullOrWhiteSpace(tokens[2]))
-                        {
-                            if (!int.TryParse(tokens[2], out normalIndex))
-                            {
-                                Console.WriteLine("Cannot parse normalIndex in face line: " + line + ".");
-                            }
-                        }
-                        face.FaceItems.Add(new FaceItem(vertexIndex - 1, textureIndex - 1, normalIndex - 1));
-                    }
-                    objects[lastObjectName].Faces.Add(face);
-                    #endregion
-                }
-                else if (s[0] == "o" && s.Length >= 2)
-                {
-                    #region object
-                    string objectName = string.Join(" ", s.Skip(1));
-                    objects[objectName] = new Object(objectName);
-                    lastObjectName = objectName;
-                    #endregion
-                }
-                else if (s[0] == "mtllib" && s.Length >= 2)
-                {
-                    #region load material
-                    string materialFileName = string.Join(" ", s.Skip(1));
-                    LoadMaterial(Path.Combine(objModelFolder, materialFileName));
-                    #endregion
-                }
-                else if (s[0] == "usemtl" && s.Length >= 2)
-                {
-                    #region use material
-                    string materialName = string.Join(" ", s.Skip(1));
-                    if (materials.ContainsKey(materialName))
-                    {
-                        lastObjectMaterial = materialName;
-                    }
-                    else
-                    {
-                        Console.WriteLine("Cannot find the material: " + materialName + ".");
-                    }
-                    #endregion
-                }
-                else if (s[0] == "g")
-                {
-                    // TODO: group
-                }
-                else if (s[0] == "s")
-                {
-                    // TODO: smoothness
-                }
-                else
-                {
-                    Console.WriteLine("Unknown line: " + line + "\n");
                 }
             }
         }

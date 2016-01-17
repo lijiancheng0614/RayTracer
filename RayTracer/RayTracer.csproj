@@ -71,6 +71,7 @@
     <Compile Include="Model\ObjModels\ObjModel.cs" />
     <Compile Include="Model\ObjModels\Object.cs" />
     <Compile Include="Model\ObjModels\Texture.cs" />
+    <Compile Include="Model\Geometries\Triangle.cs" />
     <Compile Include="Model\PerspectiveCamera.cs" />
     <Compile Include="Model\Materials\PhongMaterial.cs" />
     <Compile Include="Model\Geometries\Plane.cs" />
@@ -93,6 +94,9 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <None Include="models\dinosaur.2k.obj">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -103,6 +107,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

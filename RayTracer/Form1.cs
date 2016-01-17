@@ -6,16 +6,12 @@ namespace RayTracer
 {
     public partial class Form1 : Form
     {
-        Graphics g;
-        Point startDrawingPoint = new Point(180, 20);
         int state = 0;
 
         public Form1()
         {
             InitializeComponent();
-            g = this.CreateGraphics();
-            this.Show();
-            comboBox1.SelectedIndex = 0;
+            comboBox1.SelectedIndex = 8;
         }
 
         private void button1_Click(object sender, System.EventArgs e)
@@ -66,10 +62,15 @@ namespace RayTracer
                 case 8:
                     bitmap = Config.GetManyLightsBitmap(width, height); ;
                     break;
+                case 9:
+                    bitmap = Config.GetObjModelBitmap(width, height);
+                    break;
                 default:
                     break;
             }
-            g.DrawImage(bitmap, startDrawingPoint);
+            pictureBox1.Width = width;
+            pictureBox1.Height = height;
+            pictureBox1.Image = bitmap;
             label2.Text = "Done in " + (DateTime.Now - startDateTime).TotalSeconds.ToString() + " s.";
         }
 

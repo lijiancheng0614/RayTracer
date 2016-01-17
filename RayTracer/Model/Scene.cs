@@ -50,7 +50,7 @@ namespace RayTracer.Model
             {
                 if (depthFlag)
                 {
-                    color = result.GetDepth();
+                    color = result.GetDepthColor();
                 }
                 else if (result.Geometry.Material != null)
                 {

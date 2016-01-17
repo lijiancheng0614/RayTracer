@@ -30,7 +30,8 @@ namespace RayTracer.Model.Geometries
                 {
                     double distance = -DdotV - Math.Sqrt(discr);
                     Vector3 position = ray.GetPoint(distance);
-                    IntersectResult result = new IntersectResult(this, distance, position, position.Subtract(center).Normalize());
+                    Vector3 normal = position.Subtract(center).Normalize();
+                    IntersectResult result = new IntersectResult(this, distance, position, normal);
                     return result;
                 }
             }

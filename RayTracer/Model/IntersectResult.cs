@@ -37,7 +37,7 @@ namespace RayTracer.Model
             position = _position;
             normal = _normal;
         }
-        public Color GetDepth(int maxDepth = 20)
+        public Color GetDepthColor(int maxDepth = 20)
         {
             if (geometry == null)
                 return Color.Black;
