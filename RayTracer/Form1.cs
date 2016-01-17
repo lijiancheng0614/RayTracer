@@ -6,34 +6,20 @@ namespace RayTracer
 {
     public partial class Form1 : Form
     {
-        int state = 0;
-
         public Form1()
         {
             InitializeComponent();
-            comboBox1.SelectedIndex = 8;
+            comboBox1.SelectedIndex = 0;
         }
 
         private void button1_Click(object sender, System.EventArgs e)
         {
-            int width;
-            int height;
-            try
-            {
-                width = int.Parse(textBox1.Text);
-                height = int.Parse(textBox2.Text);
-            }
-            catch
-            {
-                MessageBox.Show("请输入整数的宽高！");
+            Size size = GetSize();
+            int width = size.Width;
+            int height = size.Height;
+            if (width <= 0 || height <= 0)
                 return;
-            }
-            if (width > 1280 || height > 720)
-            {
-                MessageBox.Show("宽高太大！");
-                return;
-            }
-            state = comboBox1.SelectedIndex + 1;
+            int state = comboBox1.SelectedIndex + 1;
             DateTime startDateTime = DateTime.Now;
             Bitmap bitmap = new Bitmap(width, height);
             switch (state)
@@ -68,16 +54,39 @@ namespace RayTracer
                 default:
                     break;
             }
-            pictureBox1.Width = width;
-            pictureBox1.Height = height;
+            pictureBox1.Size = size;
             pictureBox1.Image = bitmap;
             label2.Text = "Done in " + (DateTime.Now - startDateTime).TotalSeconds.ToString() + " s.";
         }
 
         private void button2_Click(object sender, System.EventArgs e)
         {
-            state = 0;
-            this.Invalidate();
+            Size size = GetSize();
+            Bitmap bitmap = new Bitmap(size.Width, size.Height);
+            pictureBox1.Size = size;
+            pictureBox1.Image = bitmap;
+        }
+
+        private Size GetSize()
+        {
+            int width;
+            int height;
+            try
+            {
+                width = int.Parse(textBox1.Text);
+                height = int.Parse(textBox2.Text);
+            }
+            catch
+            {
+                MessageBox.Show("请输入整数的宽高！");
+                return new Size();
+            }
+            if (width > 1280 || height > 720)
+            {
+                MessageBox.Show("宽高太大！");
+                return new Size();
+            }
+            return new Size(width, height);
         }
     }
 }
