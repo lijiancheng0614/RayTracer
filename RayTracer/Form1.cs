@@ -51,6 +51,9 @@ namespace RayTracer
                 case 9:
                     bitmap = Config.GetObjModelBitmap(width, height);
                     break;
+                case 10:
+                    bitmap = Config.GetObjModelOctreeBitmap(width, height);
+                    break;
                 default:
                     break;
             }

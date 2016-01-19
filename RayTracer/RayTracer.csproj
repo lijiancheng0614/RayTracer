@@ -53,6 +53,7 @@
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
     <Compile Include="Config.cs" />
+    <Compile Include="Model\Geometries\Box.cs" />
     <Compile Include="Model\Lights\DirectionalLight.cs" />
     <Compile Include="Model\Lights\Light.cs" />
     <Compile Include="Model\Lights\LightSample.cs" />
@@ -70,6 +71,7 @@
     <Compile Include="Model\ObjModels\Material.cs" />
     <Compile Include="Model\ObjModels\ObjModel.cs" />
     <Compile Include="Model\ObjModels\Object.cs" />
+    <Compile Include="Model\Geometries\Octree.cs" />
     <Compile Include="Model\ObjModels\Texture.cs" />
     <Compile Include="Model\Geometries\Triangle.cs" />
     <Compile Include="Model\PerspectiveCamera.cs" />

@@ -143,5 +143,20 @@ namespace RayTracer
             scene.Initialize();
             return scene.GetSystemBitmap(width, height);
         }
+
+        public static Bitmap GetObjModelOctreeBitmap(int width, int height)
+        {
+            UnionGeometry geometries = new UnionGeometry();
+            ObjModel objModel = new ObjModel("models/dinosaur.2k.obj");
+            Octree octree = new Octree(objModel.Triangles);
+            geometries.Add(octree);
+            Vector3 eye = new Vector3(-186.231323, -86.534691, 38.299175);
+            Vector3 front = new Vector3(0.906127, 0.375330, -0.195090);
+            Vector3 up = new Vector3(0.180237, 0.074646, 0.980787);
+            PerspectiveCamera camera = new PerspectiveCamera(eye, front, up, 30);
+            Scene scene = new Scene(geometries, DefaultLight, camera);
+            scene.Initialize();
+            return scene.GetSystemBitmap(width, height);
+        }
     }
 }

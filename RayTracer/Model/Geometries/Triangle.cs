@@ -26,25 +26,8 @@ namespace RayTracer.Model.Geometries
         }
 
         Vector3 n1;
-
-        public Vector3 N1
-        {
-            get { return n1; }
-        }
-
         Vector3 n2;
-
-        public Vector3 N2
-        {
-            get { return n2; }
-        }
-
         Vector3 n3;
-
-        public Vector3 N3
-        {
-            get { return n3; }
-        }
 
         Vector3 edgeAB;
         Vector3 edgeAC;
@@ -93,7 +76,7 @@ namespace RayTracer.Model.Geometries
             double uu = edgeAB.Dot(edgeAB);
             double uv = edgeAB.Dot(edgeAC);
             double vv = edgeAC.Dot(edgeAC);
-            Vector3 w = position.Subtract(A);
+            Vector3 w = position.Subtract(a);
             double wu = w.Dot(edgeAB);
             double wv = w.Dot(edgeAC);
             double D = uv * uv - uu * vv;
