@@ -7,24 +7,68 @@ Ray Tracing demos in Windows Form.
 * Microsoft .NET Framework 4.0
 * Microsoft Visual Studio 2010
 
-## Screenshots
+## UI
 
-![TestDepth](./Screenshots/TestDepth.png)
+![UI](./Images/UI.png)
 
-![TestMaterial](./Screenshots/TestMaterial.png)
+## Demos
 
-![TestRayTracing](./Screenshots/TestRayTracing.png)
+### TestDepth
 
-![TestDirectionalLight](./Screenshots/TestDirectionalLight.png)
+Render time: about 0.06s.
 
-![TestPointLight](./Screenshots/TestPointLight.png)
+![TestDepth](./Images/TestDepth.png)
 
-![TestSpotLight](./Screenshots/TestSpotLight.png)
+### TestMaterial
 
-![TestTrichromatismLights](./Screenshots/TestTrichromatismLights.png)
+Render time: about 0.09s.
 
-![TestManyLights](./Screenshots/TestManyLights.png)
+![TestMaterial](./Images/TestMaterial.png)
 
-![TestObjModel_Triangles](./Screenshots/TestObjModel_Triangles.png)
+### TestRayTracing
 
-![TestObjModel_Octree](./Screenshots/TestObjModel_Octree.png)
+Render time: about 0.15s.
+
+![TestRayTracing](./Images/TestRayTracing.png)
+
+### TestDirectionalLight
+
+Render time: about 0.13s.
+
+![TestDirectionalLight](./Images/TestDirectionalLight.png)
+
+### TestPointLight
+
+Render time: about 0.13s.
+
+![TestPointLight](./Images/TestPointLight.png)
+
+### TestSpotLight
+
+Render time: about 0.13s.
+
+![TestSpotLight](./Images/TestSpotLight.png)
+
+### TestTrichromatismLights
+
+Render time: about 0.29s.
+
+![TestTrichromatismLights](./Images/TestTrichromatismLights.png)
+
+### TestManyLights
+
+Render time: about 1.80s.
+
+![TestManyLights](./Images/TestManyLights.png)
+
+### TestObjModel
+
+* Triangles
+
+Render time: about 18s.
+
+* Octree
+
+Render time: about 3.8s.
+
+![TestObjModel](./Images/TestObjModel.png)

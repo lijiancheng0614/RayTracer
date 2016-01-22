@@ -21,7 +21,7 @@ namespace RayTracer.Model.Geometries
         }
         public override IntersectResult Intersect(Ray3 ray)
         {
-            double minDistance = 1e30; // fake infinity
+            double minDistance = Constant.Infinity;
             IntersectResult minResult = IntersectResult.NoHit();
             for (int i = 0; i < geometries.Count; ++i)
             {

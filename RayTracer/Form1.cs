@@ -12,7 +12,7 @@ namespace RayTracer
             comboBox1.SelectedIndex = 0;
         }
 
-        private void button1_Click(object sender, System.EventArgs e)
+        private void button1_Click(object sender, EventArgs e)
         {
             Size size = GetSize();
             int width = size.Width;
@@ -59,15 +59,34 @@ namespace RayTracer
             }
             pictureBox1.Size = size;
             pictureBox1.Image = bitmap;
-            label2.Text = "Done in " + (DateTime.Now - startDateTime).TotalSeconds.ToString() + " s.";
+            label3.Text = "Done in " + (DateTime.Now - startDateTime).TotalSeconds.ToString() + " s.";
         }
 
-        private void button2_Click(object sender, System.EventArgs e)
+        private void button2_Click(object sender, EventArgs e)
         {
             Size size = GetSize();
             Bitmap bitmap = new Bitmap(size.Width, size.Height);
             pictureBox1.Size = size;
             pictureBox1.Image = bitmap;
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            if (pictureBox1.Image == null)
+            {
+                MessageBox.Show("You need to draw something first!", this.Text, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                return;
+            }
+
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+            saveFileDialog.AddExtension = true;
+            saveFileDialog.FileName = comboBox1.Text + ".png";
+            saveFileDialog.DefaultExt = "png";
+            saveFileDialog.Filter = "PNG files (*.png)|*.png|" + "All files|*.*";
+            if (saveFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                pictureBox1.Image.Save(saveFileDialog.FileName);
+            }
         }
 
         private Size GetSize()
@@ -81,15 +100,11 @@ namespace RayTracer
             }
             catch
             {
-                MessageBox.Show("请输入整数的宽高！");
-                return new Size();
-            }
-            if (width > 1280 || height > 720)
-            {
-                MessageBox.Show("宽高太大！");
+                MessageBox.Show("Please enter width and height in integer.");
                 return new Size();
             }
             return new Size(width, height);
         }
+
     }
 }

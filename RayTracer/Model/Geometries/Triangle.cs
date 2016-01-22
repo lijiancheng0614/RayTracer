@@ -1,30 +1,27 @@
 ﻿using RayTracer.Model.Materials;
+using System;
 
 namespace RayTracer.Model.Geometries
 {
     class Triangle : Geometry
     {
+        Box boundingBox;
+
+        public Box BoundingBox
+        {
+            get
+            {
+                if (boundingBox == null)
+                {
+                    boundingBox = GetBoundingBox();
+                }
+                return boundingBox;
+            }
+        }
+
         Vector3 a;
-
-        public Vector3 A
-        {
-            get { return a; }
-        }
-
         Vector3 b;
-
-        public Vector3 B
-        {
-            get { return b; }
-        }
-
         Vector3 c;
-
-        public Vector3 C
-        {
-            get { return c; }
-        }
-
         Vector3 n1;
         Vector3 n2;
         Vector3 n3;
@@ -64,6 +61,13 @@ namespace RayTracer.Model.Geometries
 
         public override IntersectResult Intersect(Ray3 ray)
         {
+            return Intersect(ray, Constant.Infinity);
+        }
+
+        public IntersectResult Intersect(Ray3 ray, double maxDistance)
+        {
+            if (!BoundingBox.Intersect(ray, maxDistance))
+                return IntersectResult.NoHit();
             if (normal.SqrLength() == 0)
                 return IntersectResult.NoHit();
             Vector3 w0 = ray.Origin.Subtract(a);
@@ -96,6 +100,17 @@ namespace RayTracer.Model.Geometries
                 newNormal = n1Interpolated.Add(n2Interpolated).Add(n3Interpolated);
             }
             return new IntersectResult(this, distance, position, newNormal);
+        }
+
+        private Box GetBoundingBox()
+        {
+            double minX = Math.Min(a.X, Math.Min(b.X, c.X));
+            double maxX = Math.Max(a.X, Math.Max(b.X, c.X));
+            double minY = Math.Min(a.Y, Math.Min(b.Y, c.Y));
+            double maxY = Math.Max(a.Y, Math.Max(b.Y, c.Y));
+            double minZ = Math.Min(a.Z, Math.Min(b.Z, c.Z));
+            double maxZ = Math.Max(a.Z, Math.Max(b.Z, c.Z));
+            return new Box(minX, maxX, minY, maxY, minZ, maxZ);
         }
     }
 }

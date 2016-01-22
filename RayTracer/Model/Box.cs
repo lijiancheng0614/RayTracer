@@ -21,6 +21,22 @@ namespace RayTracer.Model.Geometries
             maxZ = _maxZ;
         }
 
+        public Vector3 Min
+        {
+            get
+            {
+                return new Vector3(minX, minY, minZ);
+            }
+        }
+
+        public Vector3 Max
+        {
+            get
+            {
+                return new Vector3(maxX, maxY, maxZ);
+            }
+        }
+
         public bool Intersect(Ray3 ray, double maxDistance)
         {
             double tMin;

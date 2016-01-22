@@ -5,41 +5,49 @@ namespace RayTracer.Model.Geometries
 {
     class Octree : Geometry
     {
-        private const int TriangleCountInLeaf = 10;
         private Box boundingBox;
-        private List<Octree> children;
-        private List<Triangle> nodeTriangles;
 
-        public Octree(List<Triangle> triangles)
+        internal Box BoundingBox
         {
-            double minX = triangles[0].A.X, maxX = triangles[0].A.X;
-            double minY = triangles[0].A.Y, maxY = triangles[0].A.Y;
-            double minZ = triangles[0].A.Z, maxZ = triangles[0].A.Z;
-            foreach (Triangle triangle in triangles)
+            get
             {
-                minX = Math.Min(minX, Math.Min(triangle.A.X, Math.Min(triangle.B.X, triangle.C.X)));
-                maxX = Math.Max(maxX, Math.Max(triangle.A.X, Math.Max(triangle.B.X, triangle.C.X)));
-                minY = Math.Min(minY, Math.Min(triangle.A.Y, Math.Min(triangle.B.Y, triangle.C.Y)));
-                maxY = Math.Max(maxY, Math.Max(triangle.A.Y, Math.Max(triangle.B.Y, triangle.C.Y)));
-                minZ = Math.Min(minZ, Math.Min(triangle.A.Z, Math.Min(triangle.B.Z, triangle.C.Z)));
-                maxZ = Math.Max(maxZ, Math.Max(triangle.A.Z, Math.Max(triangle.B.Z, triangle.C.Z)));
+                if (boundingBox == null)
+                {
+                    boundingBox = GetBoundingBox();
+                }
+                return boundingBox;
             }
-            Vector3 min = new Vector3(minX, minY, minZ);
-            Vector3 max = new Vector3(maxX, maxY, maxZ);
-            boundingBox = new Box(minX, maxX, minY, maxY, minZ, maxZ);
-            if (triangles.Count > TriangleCountInLeaf)
+        }
+
+        private readonly List<Triangle> triangles;
+        private List<Triangle> nodeTriangles;
+        private List<Octree> children;
+
+        public Octree(List<Triangle> _triangles)
+        {
+            triangles = _triangles;
+        }
+
+        public override void Initialize()
+        {
+            if (triangles.Count > Constant.TriangleCountInLeaf)
             {
                 children = new List<Octree>();
-                SubDivide(triangles, min, max);
+                Vector3 min = BoundingBox.Min;
+                Vector3 max = BoundingBox.Max;
+                double avgX = (min.X + max.X) / 2;
+                double avgY = (min.Y + max.Y) / 2;
+                double avgZ = (min.Z + max.Z) / 2;
+                SubDivide(triangles, avgX, avgY, avgZ);
+                foreach (var child in children)
+                {
+                    child.Initialize();
+                }
             }
             else
             {
                 nodeTriangles = triangles;
             }
-        }
-
-        public override void Initialize()
-        {
             if (nodeTriangles != null)
             {
                 foreach (var triangle in nodeTriangles)
@@ -47,23 +55,16 @@ namespace RayTracer.Model.Geometries
                     triangle.Initialize();
                 }
             }
-            if (children != null)
-            {
-                foreach (var child in children)
-                {
-                    child.Initialize();
-                }
-            }
         }
 
         public override IntersectResult Intersect(Ray3 ray)
         {
-            return Intersect(ray, 1e30); // fake infinity
+            return Intersect(ray, Constant.Infinity);
         }
 
         public IntersectResult Intersect(Ray3 ray, double maxDistance)
         {
-            if (!boundingBox.Intersect(ray, maxDistance))
+            if (!BoundingBox.Intersect(ray, maxDistance))
                 return IntersectResult.NoHit();
             double minDistance = maxDistance;
             IntersectResult minResult = IntersectResult.NoHit();
@@ -71,7 +72,7 @@ namespace RayTracer.Model.Geometries
             {
                 foreach (var triangle in nodeTriangles)
                 {
-                    IntersectResult result = triangle.Intersect(ray);
+                    IntersectResult result = triangle.Intersect(ray, minDistance);
                     if (result.Geometry != null && result.Distance < minDistance)
                     {
                         minDistance = result.Distance;
@@ -94,11 +95,29 @@ namespace RayTracer.Model.Geometries
             return minResult;
         }
 
-        private void SubDivide(List<Triangle> triangles, Vector3 min, Vector3 max)
+        private Box GetBoundingBox()
         {
-            double avgX = (min.X + max.X) / 2;
-            double avgY = (min.Y + max.Y) / 2;
-            double avgZ = (min.Z + max.Z) / 2;
+            Vector3 min = triangles[0].BoundingBox.Min;
+            Vector3 max = triangles[0].BoundingBox.Max;
+            double minX = min.X, maxX = max.X;
+            double minY = min.Y, maxY = max.Y;
+            double minZ = min.Z, maxZ = max.Z;
+            foreach (Triangle triangle in triangles)
+            {
+                min = triangle.BoundingBox.Min;
+                max = triangle.BoundingBox.Max;
+                minX = Math.Min(minX, min.X);
+                maxX = Math.Max(maxX, max.X);
+                minY = Math.Min(minY, min.Y);
+                maxY = Math.Max(maxY, max.Y);
+                minZ = Math.Min(minZ, min.Z);
+                maxZ = Math.Max(maxZ, max.Z);
+            }
+            return new Box(minX, maxX, minY, maxY, minZ, maxZ);
+        }
+
+        private void SubDivide(List<Triangle> triangles, double avgX, double avgY, double avgZ)
+        {
             List<Triangle>[] subnodes = new List<Triangle>[8];
             for (int i = 0; i < 8; ++i)
             {
@@ -128,27 +147,29 @@ namespace RayTracer.Model.Geometries
         private static int AssignSubnodeIndex(Triangle triangle, double avgX, double avgY, double avgZ)
         {
             int subNodeIndex = 0;
-            if (triangle.A.X > avgX && triangle.B.X > avgX && triangle.C.X > avgX)
+            Vector3 min = triangle.BoundingBox.Min;
+            Vector3 max = triangle.BoundingBox.Max;
+            if (min.X > avgX)
             {
                 subNodeIndex += 1;
             }
-            else if (triangle.A.X > avgX || triangle.B.X > avgX || triangle.C.X > avgX)
+            else if (max.X > avgX)
             {
                 return -1;
             }
-            if (triangle.A.Y > avgY && triangle.B.Y > avgY && triangle.C.Y > avgY)
+            if (min.Y > avgY)
             {
                 subNodeIndex += 2;
             }
-            else if (triangle.A.Y > avgY || triangle.B.Y > avgY || triangle.C.Y > avgY)
+            else if (max.Y > avgY)
             {
                 return -1;
             }
-            if (triangle.A.Z > avgZ && triangle.B.Z > avgZ && triangle.C.Z > avgZ)
+            if (min.Z > avgZ)
             {
                 subNodeIndex += 4;
             }
-            else if (triangle.A.Z > avgZ || triangle.B.Z > avgZ || triangle.C.Z > avgZ)
+            else if (max.Z > avgZ)
             {
                 return -1;
             }

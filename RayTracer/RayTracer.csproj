@@ -53,7 +53,8 @@
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
     <Compile Include="Config.cs" />
-    <Compile Include="Model\Geometries\Box.cs" />
+    <Compile Include="Model\Constant.cs" />
+    <Compile Include="Model\Box.cs" />
     <Compile Include="Model\Lights\DirectionalLight.cs" />
     <Compile Include="Model\Lights\Light.cs" />
     <Compile Include="Model\Lights\LightSample.cs" />
