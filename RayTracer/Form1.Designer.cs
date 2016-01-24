@@ -89,7 +89,8 @@
             "TestTrichromatismLights",
             "TestManyLights",
             "TestObjModel_Triangles",
-            "TestObjModel_Octree"});
+            "TestObjModel_Octree",
+            "TestObjModel_Octree_MultiThread"});
             this.comboBox1.Location = new System.Drawing.Point(12, 64);
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(177, 20);

@@ -71,4 +71,8 @@ Render time: about 18s.
 
 Render time: about 3.8s.
 
+* Octree, MultiThread
+
+Render time: about 2.3s.
+
 ![TestObjModel](./Images/TestObjModel.png)

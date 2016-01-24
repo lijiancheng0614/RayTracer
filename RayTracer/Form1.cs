@@ -10,6 +10,8 @@ namespace RayTracer
         {
             InitializeComponent();
             comboBox1.SelectedIndex = 0;
+            // TODO
+            Form1.CheckForIllegalCrossThreadCalls = false;
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -20,54 +22,55 @@ namespace RayTracer
             if (width <= 0 || height <= 0)
                 return;
             int state = comboBox1.SelectedIndex + 1;
-            DateTime startDateTime = DateTime.Now;
-            Bitmap bitmap = new Bitmap(width, height);
+            EventHandler taskEndEventHandler = new EventHandler(RenderDone);
             switch (state)
             {
                 case 1:
-                    bitmap = Config.GetDepthBitmap(width, height);
+                    Config.TestDepth(width, height, taskEndEventHandler);
                     break;
                 case 2:
-                    bitmap = Config.GetMaterialBitmap(width, height);
+                    Config.TestMaterial(width, height, taskEndEventHandler);
                     break;
                 case 3:
-                    bitmap = Config.GetRayTracingBitmap(width, height);
+                    Config.TestRayTracing(width, height, taskEndEventHandler);
                     break;
                 case 4:
-                    bitmap = Config.GetDirectionalLightBitmap(width, height);
+                    Config.TestDirectionalLight(width, height, taskEndEventHandler);
                     break;
                 case 5:
-                    bitmap = Config.GetPointLightBitmap(width, height);
+                    Config.TestPointLight(width, height, taskEndEventHandler);
                     break;
                 case 6:
-                    bitmap = Config.GetSpotLightBitmap(width, height);
+                    Config.TestSpotLight(width, height, taskEndEventHandler);
                     break;
                 case 7:
-                    bitmap = Config.GetTrichromatismLightsBitmap(width, height);
+                    Config.TestTrichromatismLights(width, height, taskEndEventHandler);
                     break;
                 case 8:
-                    bitmap = Config.GetManyLightsBitmap(width, height); ;
+                    Config.TestManyLights(width, height, taskEndEventHandler); ;
                     break;
                 case 9:
-                    bitmap = Config.GetObjModelBitmap(width, height);
+                    Config.TestObjModel(width, height, taskEndEventHandler);
                     break;
                 case 10:
-                    bitmap = Config.GetObjModelOctreeBitmap(width, height);
+                    Config.TestObjModelOctree(width, height, taskEndEventHandler);
+                    break;
+                case 11:
+                    Config.TestObjModelOctreeMultiThread(width, height, taskEndEventHandler);
                     break;
                 default:
                     break;
             }
-            pictureBox1.Size = size;
-            pictureBox1.Image = bitmap;
-            label3.Text = "Done in " + (DateTime.Now - startDateTime).TotalSeconds.ToString() + " s.";
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
             Size size = GetSize();
-            Bitmap bitmap = new Bitmap(size.Width, size.Height);
-            pictureBox1.Size = size;
-            pictureBox1.Image = bitmap;
+            int width = size.Width;
+            int height = size.Height;
+            if (width <= 0 || height <= 0)
+                return;
+            pictureBox1.Image = new Bitmap(width, height);
         }
 
         private void button3_Click(object sender, EventArgs e)
@@ -87,6 +90,13 @@ namespace RayTracer
             {
                 pictureBox1.Image.Save(saveFileDialog.FileName);
             }
+        }
+
+        private void RenderDone(object sender, EventArgs e)
+        {
+            RenderEventArgs renderEventArgs = (RenderEventArgs)e;
+            pictureBox1.Image = renderEventArgs.Image;
+            label3.Text = "Done in " + renderEventArgs.RenderTime.ToString() + " s.";
         }
 
         private Size GetSize()
