@@ -13,7 +13,7 @@ namespace RayTracer.Model
         UnionGeometry geometries;
         UnionLight lights;
         PerspectiveCamera camera;
-        
+
         CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
         EventHandler taskEndEventHandler;
         MultiThreadImage image;
@@ -27,11 +27,11 @@ namespace RayTracer.Model
         double dx;
         double dy;
 
-        public Scene(UnionGeometry _geometries, UnionLight _lights, PerspectiveCamera _camera)
+        public Scene(UnionGeometry geometries, UnionLight lights, PerspectiveCamera camera)
         {
-            geometries = _geometries;
-            lights = _lights;
-            camera = _camera;
+            this.geometries = geometries;
+            this.lights = lights;
+            this.camera = camera;
         }
         public void Initialize()
         {
@@ -81,7 +81,7 @@ namespace RayTracer.Model
                 for (int x = threadId; x < width; x += threadCount)
                 {
                     double sx = dx * x;
-                    Ray3 ray = new Ray3(camera.GenerateRay(sx, sy));
+                    Ray3 ray = camera.GenerateRay(sx, sy);
                     Color color = rayTracing(ray, rayTracingMaxReflect);
                     image.SetPixel(x, y, color.GetSystemColor());
                 }
@@ -103,16 +103,16 @@ namespace RayTracer.Model
                     double reflectiveness = result.Geometry.Material.Reflectiveness;
                     foreach (LightSample lightSample in lightSamples)
                     {
-                        color = color.Add(result.Geometry.Material.Sample(ray, result.Normal, result.Position, lightSample));
+                        color = color + result.Geometry.Material.Sample(ray, result.Normal, result.Position, lightSample);
                     }
-                    color = color.Multiply(1 - reflectiveness);
+                    color = color * (1 - reflectiveness);
 
                     if (reflectiveness > 0 && maxReflect > 0)
                     {
-                        Vector3 r = result.Normal.Multiply(-2 * result.Normal.Dot(ray.Direction)).Add(ray.Direction);
+                        Vector3 r = result.Normal * (result.Normal ^ ray.Direction * (-2)) + ray.Direction;
                         Ray3 newRay = new Ray3(result.Position, r);
                         Color reflectedColor = rayTracing(newRay, maxReflect - 1);
-                        color = color.Add(reflectedColor.Multiply(reflectiveness));
+                        color = color + reflectedColor * reflectiveness;
                     }
                 }
             }

@@ -23,9 +23,9 @@ namespace RayTracer.Model.Geometries
         private List<Triangle> nodeTriangles;
         private List<Octree> children;
 
-        public Octree(List<Triangle> _triangles)
+        public Octree(List<Triangle> triangles)
         {
-            triangles = _triangles;
+            this.triangles = triangles;
         }
 
         public override void Initialize()

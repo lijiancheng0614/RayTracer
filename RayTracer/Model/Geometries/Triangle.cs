@@ -31,32 +31,32 @@ namespace RayTracer.Model.Geometries
         Vector3 normal;
         bool hasVertexNormals = false;
 
-        public Triangle(Vector3 _a, Vector3 _b, Vector3 _c, Material _material = null)
-            : base(_material)
+        public Triangle(Vector3 a, Vector3 b, Vector3 c, Material material = null)
+            : base(material)
         {
-            a = _a;
-            b = _b;
-            c = _c;
+            this.a = a;
+            this.b = b;
+            this.c = c;
             hasVertexNormals = false;
         }
 
-        public Triangle(Vector3 _a, Vector3 _n1, Vector3 _b, Vector3 _n2, Vector3 _c, Vector3 _n3, Material _material = null)
-            : base(_material)
+        public Triangle(Vector3 a, Vector3 n1, Vector3 b, Vector3 n2, Vector3 c, Vector3 n3, Material material = null)
+            : base(material)
         {
-            a = _a;
-            b = _b;
-            c = _c;
-            n1 = _n1;
-            n2 = _n2;
-            n3 = _n3;
+            this.a = a;
+            this.b = b;
+            this.c = c;
+            this.n1 = n1;
+            this.n2 = n2;
+            this.n3 = n3;
             hasVertexNormals = true;
         }
 
         public override void Initialize()
         {
-            edgeAB = b.Subtract(a);
-            edgeAC = c.Subtract(a);
-            normal = edgeAB.Cross(edgeAC).Normalize();
+            edgeAB = b - a;
+            edgeAC = c - a;
+            normal = (edgeAB * edgeAC).Normalize();
         }
 
         public override IntersectResult Intersect(Ray3 ray)
@@ -70,19 +70,19 @@ namespace RayTracer.Model.Geometries
                 return IntersectResult.NoHit();
             if (normal.SqrLength() == 0)
                 return IntersectResult.NoHit();
-            Vector3 w0 = ray.Origin.Subtract(a);
-            double x = -normal.Dot(w0);
-            double y = normal.Dot(ray.Direction);
+            Vector3 w0 = ray.Origin - a;
+            double x = -normal ^ w0;
+            double y = normal ^ ray.Direction;
             double distance = x / y;
             if (y == 0 || distance < 0)
                 return IntersectResult.NoHit();
             Vector3 position = ray.GetPoint(distance);
-            double uu = edgeAB.Dot(edgeAB);
-            double uv = edgeAB.Dot(edgeAC);
-            double vv = edgeAC.Dot(edgeAC);
-            Vector3 w = position.Subtract(a);
-            double wu = w.Dot(edgeAB);
-            double wv = w.Dot(edgeAC);
+            double uu = edgeAB ^ edgeAB;
+            double uv = edgeAB ^ edgeAC;
+            double vv = edgeAC ^ edgeAC;
+            Vector3 w = position - a;
+            double wu = w ^ (edgeAB);
+            double wv = w ^ (edgeAC);
             double D = uv * uv - uu * vv;
             double beta = (uv * wv - vv * wu) / D;
             if (beta < 0 || beta > 1)
@@ -94,10 +94,10 @@ namespace RayTracer.Model.Geometries
             Vector3 newNormal = normal;
             if (distance > 0 && hasVertexNormals)
             {
-                Vector3 n1Interpolated = n1.Multiply(alpha);
-                Vector3 n2Interpolated = n2.Multiply(beta);
-                Vector3 n3Interpolated = n3.Multiply(gamma);
-                newNormal = n1Interpolated.Add(n2Interpolated).Add(n3Interpolated);
+                Vector3 n1Interpolated = n1 * alpha;
+                Vector3 n2Interpolated = n2 * beta;
+                Vector3 n3Interpolated = n3 * gamma;
+                newNormal = n1Interpolated + n2Interpolated + n3Interpolated;
             }
             return new IntersectResult(this, distance, position, newNormal);
         }

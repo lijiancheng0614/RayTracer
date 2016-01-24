@@ -15,21 +15,21 @@ namespace RayTracer.Model.Lights
         {
             lights.Add(light);
         }
-        public override void Initialize()
-        {
-            for (int i = 0; i < lights.Count; ++i)
-                lights[i].Initialize();
-        }
         public void Clear()
         {
             lights.Clear();
         }
+        public override void Initialize()
+        {
+            foreach (Light light in lights)
+                light.Initialize();
+        }
         public List<LightSample> GetLightSample(Geometry geometry, Vector3 position)
         {
             List<LightSample> list = new List<LightSample>();
-            for (int i = 0; i < lights.Count; ++i)
+            foreach (Light light in lights)
             {
-                LightSample lightSample = lights[i].Sample(geometry, position);
+                LightSample lightSample = light.Sample(geometry, position);
                 if (lightSample != LightSample.Zero)
                 {
                     list.Add(lightSample);

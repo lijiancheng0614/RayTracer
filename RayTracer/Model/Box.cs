@@ -11,16 +11,6 @@ namespace RayTracer.Model.Geometries
         private readonly double minZ;
         private readonly double maxZ;
 
-        public Box(double _minX, double _maxX, double _minY, double _maxY, double _minZ, double _maxZ)
-        {
-            minX = _minX;
-            maxX = _maxX;
-            minY = _minY;
-            maxY = _maxY;
-            minZ = _minZ;
-            maxZ = _maxZ;
-        }
-
         public Vector3 Min
         {
             get
@@ -35,6 +25,16 @@ namespace RayTracer.Model.Geometries
             {
                 return new Vector3(maxX, maxY, maxZ);
             }
+        }
+
+        public Box(double minX, double maxX, double minY, double maxY, double minZ, double maxZ)
+        {
+            this.minX = minX;
+            this.maxX = maxX;
+            this.minY = minY;
+            this.maxY = maxY;
+            this.minZ = minZ;
+            this.maxZ = maxZ;
         }
 
         public bool Intersect(Ray3 ray, double maxDistance)

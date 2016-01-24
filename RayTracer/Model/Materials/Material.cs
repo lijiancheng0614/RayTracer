@@ -11,9 +11,9 @@ namespace RayTracer.Model.Materials
             get { return reflectiveness; }
         }
 
-        public Material(double _reflectiveness = 0)
+        public Material(double reflectiveness = 0)
         {
-            reflectiveness = _reflectiveness;
+            this.reflectiveness = reflectiveness;
         }
         public virtual Color Sample(Ray3 ray, Vector3 normal, Vector3 position, LightSample lightSample)
         {

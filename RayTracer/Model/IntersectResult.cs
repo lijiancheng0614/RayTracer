@@ -11,18 +11,21 @@ namespace RayTracer.Model
         {
             get { return geometry; }
         }
+
         double distance;
 
         public double Distance
         {
             get { return distance; }
         }
+
         Vector3 position;
 
         public Vector3 Position
         {
             get { return position; }
         }
+
         Vector3 normal;
 
         public Vector3 Normal
@@ -30,12 +33,12 @@ namespace RayTracer.Model
             get { return normal; }
         }
 
-        public IntersectResult(Geometry _geometry, double _distance, Vector3 _position, Vector3 _normal)
+        public IntersectResult(Geometry geometry, double distance, Vector3 position, Vector3 normal)
         {
-            geometry = _geometry;
-            distance = _distance;
-            position = _position;
-            normal = _normal;
+            this.geometry = geometry;
+            this.distance = distance;
+            this.position = position;
+            this.normal = normal;
         }
         public Color GetDepthColor(int maxDepth = 20)
         {

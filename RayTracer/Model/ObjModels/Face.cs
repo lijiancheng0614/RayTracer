@@ -10,6 +10,7 @@ namespace RayTracer.Model.ObjModels
         {
             get { return materialName; }
         }
+
         List<FaceItem> faceItems;
 
         public List<FaceItem> FaceItems
@@ -17,9 +18,9 @@ namespace RayTracer.Model.ObjModels
             get { return faceItems; }
         }
 
-        public Face(string _materialName)
+        public Face(string materialName)
         {
-            materialName = _materialName;
+            this.materialName = materialName;
             faceItems = new List<FaceItem>();
         }
     }

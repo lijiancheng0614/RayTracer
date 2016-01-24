@@ -9,18 +9,18 @@ namespace RayTracer.Model.Lights
         Vector3 position;
         bool shadow;
 
-        public PointLight(Color _intensity, Vector3 _position, bool _shadow = true)
+        public PointLight(Color intensity, Vector3 position, bool shadow = true)
         {
-            intensity = _intensity;
-            position = _position;
-            shadow = _shadow;
+            this.intensity = intensity;
+            this.position = position;
+            this.shadow = shadow;
         }
         public override LightSample Sample(Geometry geometry, Vector3 position)
         {
-            Vector3 delta = this.position.Subtract(position);
+            Vector3 delta = this.position - position;
             double rr = delta.SqrLength();
             double r = Math.Sqrt(rr);
-            Vector3 l = delta.Divide(r);
+            Vector3 l = delta / r;
             if (shadow)
             {
                 var shadowRay = new Ray3(position, l);
@@ -29,7 +29,7 @@ namespace RayTracer.Model.Lights
                     return LightSample.Zero;
             }
             double attenuation = 1 / rr;
-            return new LightSample(l, intensity.Multiply(attenuation));
+            return new LightSample(l, intensity * attenuation);
         }
     }
 }

@@ -9,6 +9,7 @@ namespace RayTracer.Model.ObjModels
         {
             get { return x; }
         }
+
         double y;
 
         public double Y
@@ -16,10 +17,10 @@ namespace RayTracer.Model.ObjModels
             get { return y; }
         }
 
-        public Texture(double _x, double _y)
+        public Texture(double x, double y)
         {
-            x = _x;
-            y = _y;
+            this.x = x;
+            this.y = y;
         }
     }
 }

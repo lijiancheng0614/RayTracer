@@ -16,16 +16,16 @@ namespace RayTracer.Model.Geometries
         }
         public override void Initialize()
         {
-            for (int i = 0; i < geometries.Count; ++i)
-                geometries[i].Initialize();
+            foreach (Geometry geometry in geometries)
+                geometry.Initialize();
         }
         public override IntersectResult Intersect(Ray3 ray)
         {
             double minDistance = Constant.Infinity;
             IntersectResult minResult = IntersectResult.NoHit();
-            for (int i = 0; i < geometries.Count; ++i)
+            foreach (Geometry geometry in geometries)
             {
-                IntersectResult result = geometries[i].Intersect(ray);
+                IntersectResult result = geometry.Intersect(ray);
                 if (result.Geometry != null && result.Distance < minDistance)
                 {
                     minDistance = result.Distance;

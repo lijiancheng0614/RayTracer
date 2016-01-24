@@ -14,10 +14,10 @@ namespace RayTracer
             get
             {
                 UnionGeometry geometries = new UnionGeometry();
-                geometries.Add(new Plane(new Vector3(0, 1, 0), 0, new PhongMaterial(Model.Color.White, Model.Color.Black, 0)));
-                geometries.Add(new Plane(new Vector3(0, 0, 1), -50, new PhongMaterial(Model.Color.White, Model.Color.Black, 0)));
-                geometries.Add(new Plane(new Vector3(1, 0, 0), -20, new PhongMaterial(Model.Color.White, Model.Color.Black, 0)));
-                geometries.Add(new Sphere(new Vector3(0, 10, -10), 10, new PhongMaterial(Model.Color.White, Model.Color.Black, 0)));
+                geometries.Add(new Plane(new Vector3(0, 1, 0), 0, new PhongMaterial(Model.Color.Black, Model.Color.White, Model.Color.Black, 0)));
+                geometries.Add(new Plane(new Vector3(0, 0, 1), -50, new PhongMaterial(Model.Color.Black, Model.Color.White, Model.Color.Black, 0)));
+                geometries.Add(new Plane(new Vector3(1, 0, 0), -20, new PhongMaterial(Model.Color.Black, Model.Color.White, Model.Color.Black, 0)));
+                geometries.Add(new Sphere(new Vector3(0, 10, -10), 10, new PhongMaterial(Model.Color.Black, Model.Color.White, Model.Color.Black, 0)));
                 return geometries;
             }
         }
@@ -55,8 +55,8 @@ namespace RayTracer
         {
             UnionGeometry geometries = new UnionGeometry();
             geometries.Add(new Plane(new Vector3(0, 1, 0), 0, new CheckerMaterial(0.1)));
-            geometries.Add(new Sphere(new Vector3(-10, 10, -10), 10, new PhongMaterial(Model.Color.Red, Model.Color.White, 16)));
-            geometries.Add(new Sphere(new Vector3(10, 10, -10), 10, new PhongMaterial(Model.Color.Blue, Model.Color.White, 16)));
+            geometries.Add(new Sphere(new Vector3(-10, 10, -10), 10, new PhongMaterial(Model.Color.Black, Model.Color.Red, Model.Color.White, 16)));
+            geometries.Add(new Sphere(new Vector3(10, 10, -10), 10, new PhongMaterial(Model.Color.Black, Model.Color.Blue, Model.Color.White, 16)));
             PerspectiveCamera camera = new PerspectiveCamera(new Vector3(0, 5, 15), new Vector3(0, 0, -1), new Vector3(0, 1, 0), 90);
             Scene scene = new Scene(geometries, DefaultLight, camera);
             scene.Initialize();
@@ -67,8 +67,8 @@ namespace RayTracer
         {
             UnionGeometry geometries = new UnionGeometry();
             geometries.Add(new Plane(new Vector3(0, 1, 0), 0, new CheckerMaterial(0.1, 0.5)));
-            geometries.Add(new Sphere(new Vector3(-10, 10, -10), 10, new PhongMaterial(Model.Color.Red, Model.Color.White, 16, 0.25)));
-            geometries.Add(new Sphere(new Vector3(10, 10, -10), 10, new PhongMaterial(Model.Color.Blue, Model.Color.White, 16, 0.25)));
+            geometries.Add(new Sphere(new Vector3(-10, 10, -10), 10, new PhongMaterial(Model.Color.Black, Model.Color.Red, Model.Color.White, 16, 0.25)));
+            geometries.Add(new Sphere(new Vector3(10, 10, -10), 10, new PhongMaterial(Model.Color.Black, Model.Color.Blue, Model.Color.White, 16, 0.25)));
             PerspectiveCamera camera = new PerspectiveCamera(new Vector3(0, 5, 15), new Vector3(0, 0, -1), new Vector3(0, 1, 0), 90);
             Scene scene = new Scene(geometries, DefaultLight, camera);
             scene.Initialize();
@@ -87,7 +87,7 @@ namespace RayTracer
         public static void TestPointLight(int width, int height, EventHandler taskEndEventHandler)
         {
             UnionLight lights = new UnionLight();
-            lights.Add(new PointLight(Model.Color.White.Multiply(2000), new Vector3(30, 40, 20)));
+            lights.Add(new PointLight(Model.Color.White * 2000, new Vector3(30, 40, 20)));
             Scene scene = new Scene(DefaultGeometries, lights, DefaultCamera);
             scene.Initialize();
             scene.GetImage(width, height, taskEndEventHandler);
@@ -96,7 +96,7 @@ namespace RayTracer
         public static void TestSpotLight(int width, int height, EventHandler taskEndEventHandler)
         {
             UnionLight lights = new UnionLight();
-            lights.Add(new SpotLight(Model.Color.White.Multiply(2000), new Vector3(30, 40, 20), new Vector3(-1, -1, -1), 20, 30, 0.5));
+            lights.Add(new SpotLight(Model.Color.White * 2000, new Vector3(30, 40, 20), new Vector3(-1, -1, -1), 20, 30, 0.5));
             Scene scene = new Scene(DefaultGeometries, lights, DefaultCamera);
             scene.Initialize();
             scene.GetImage(width, height, taskEndEventHandler);
@@ -105,10 +105,10 @@ namespace RayTracer
         public static void TestTrichromatismLights(int width, int height, EventHandler taskEndEventHandler)
         {
             UnionLight lights = new UnionLight();
-            lights.Add(new PointLight(Model.Color.White.Multiply(1000), new Vector3(30, 40, 20)));
-            lights.Add(new SpotLight(Model.Color.Red.Multiply(3000), new Vector3(0, 30, 10), new Vector3(0, -1, -1), 20, 30, 1));
-            lights.Add(new SpotLight(Model.Color.Green.Multiply(3000), new Vector3(6, 30, 20), new Vector3(0, -1, -1), 20, 30, 1));
-            lights.Add(new SpotLight(Model.Color.Blue.Multiply(3000), new Vector3(-6, 30, 20), new Vector3(0, -1, -1), 20, 30, 1));
+            lights.Add(new PointLight(Model.Color.White * 1000, new Vector3(30, 40, 20)));
+            lights.Add(new SpotLight(Model.Color.Red * 3000, new Vector3(0, 30, 10), new Vector3(0, -1, -1), 20, 30, 1));
+            lights.Add(new SpotLight(Model.Color.Green * 3000, new Vector3(6, 30, 20), new Vector3(0, -1, -1), 20, 30, 1));
+            lights.Add(new SpotLight(Model.Color.Blue * 3000, new Vector3(-6, 30, 20), new Vector3(0, -1, -1), 20, 30, 1));
             Scene scene = new Scene(DefaultGeometries, lights, DefaultCamera);
             scene.Initialize();
             scene.GetImage(width, height, taskEndEventHandler);
@@ -119,8 +119,8 @@ namespace RayTracer
             UnionLight lights = new UnionLight();
             for (int x = 10; x <= 30; x += 4)
                 for (int z = 20; z <= 40; z += 4)
-                    lights.Add(new PointLight(Model.Color.White.Multiply(80), new Vector3(x, 50, z)));
-            DirectionalLight fillLight = new DirectionalLight(Model.Color.White.Multiply(0.25), new Vector3(1.5, 1, 0.5), false);
+                    lights.Add(new PointLight(Model.Color.White * 80, new Vector3(x, 50, z)));
+            DirectionalLight fillLight = new DirectionalLight(Model.Color.White * 0.25, new Vector3(1.5, 1, 0.5), false);
             lights.Add(fillLight);
             Scene scene = new Scene(DefaultGeometries, lights, DefaultCamera);
             scene.Initialize();

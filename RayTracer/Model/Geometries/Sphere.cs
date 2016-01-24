@@ -8,21 +8,17 @@ namespace RayTracer.Model.Geometries
         Vector3 center;
         double radius;
 
-        public Sphere(Vector3 _center, double _radius, Material _material = null)
-            : base(_material)
+        public Sphere(Vector3 center, double radius, Material material = null)
+            : base(material)
         {
-            center = _center;
-            radius = _radius;
-        }
-        public double SqrRadius()
-        {
-            return radius * radius;
+            this.center = center;
+            this.radius = radius;
         }
         public override IntersectResult Intersect(Ray3 ray)
         {
-            Vector3 v = ray.Origin.Subtract(center);
-            double a0 = v.SqrLength() - SqrRadius();
-            double DdotV = ray.Direction.Dot(v);
+            Vector3 v = ray.Origin - center;
+            double a0 = v.SqrLength() - radius * radius;
+            double DdotV = ray.Direction ^ v;
             if (DdotV <= 0)
             {
                 double discr = DdotV * DdotV - a0;
@@ -30,7 +26,7 @@ namespace RayTracer.Model.Geometries
                 {
                     double distance = -DdotV - Math.Sqrt(discr);
                     Vector3 position = ray.GetPoint(distance);
-                    Vector3 normal = position.Subtract(center).Normalize();
+                    Vector3 normal = (position - center).Normalize();
                     IntersectResult result = new IntersectResult(this, distance, position, normal);
                     return result;
                 }

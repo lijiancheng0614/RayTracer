@@ -8,23 +8,22 @@ namespace RayTracer.Model.Geometries
         double d;
         Vector3 position;
 
-        public Plane(Vector3 _normal, double _d, Material _material = null)
-            : base(_material)
+        public Plane(Vector3 normal, double d, Material material = null)
+            : base(material)
         {
-            normal = _normal;
-            d = _d;
-            position = Vector3.Zero;
+            this.normal = normal;
+            this.d = d;
         }
         public override void Initialize()
         {
-            position = normal.Multiply(d);
+            position = normal * d;
         }
         public override IntersectResult Intersect(Ray3 ray)
         {
-            double a = ray.Direction.Dot(normal);
+            double a = ray.Direction ^ normal;
             if (a >= 0)
                 return IntersectResult.NoHit();
-            double b = normal.Dot(ray.Origin.Subtract(position));
+            double b = normal ^ (ray.Origin - position);
             double distance = -b / a;
             return new IntersectResult(this, distance, ray.GetPoint(distance), normal);
         }

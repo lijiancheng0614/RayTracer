@@ -10,12 +10,14 @@ namespace RayTracer.Model
         {
             get { return x; }
         }
+
         double y;
 
         public double Y
         {
             get { return y; }
         }
+
         double z;
 
         public double Z
@@ -23,17 +25,11 @@ namespace RayTracer.Model
             get { return z; }
         }
 
-        public Vector3(double _x, double _y, double _z)
+        public Vector3(double x, double y, double z)
         {
-            x = _x;
-            y = _y;
-            z = _z;
-        }
-        public Vector3(Vector3 v)
-        {
-            x = v.x;
-            y = v.y;
-            x = v.z;
+            this.x = x;
+            this.y = y;
+            this.z = z;
         }
         public double SqrLength()
         {
@@ -48,34 +44,36 @@ namespace RayTracer.Model
             double inv = 1 / Length();
             return new Vector3(x * inv, y * inv, z * inv);
         }
-        public Vector3 Negate()
+        public static Vector3 operator -(Vector3 v)
         {
-            return new Vector3(-x, -y, -z);
+            return new Vector3(-v.x, -v.y, -v.z);
         }
-        public Vector3 Add(Vector3 v)
+        public static Vector3 operator +(Vector3 v1, Vector3 v2)
         {
-            return new Vector3(x + v.x, y + v.y, z + v.z);
+            return new Vector3(v1.x + v2.x, v1.y + v2.y, v1.z + v2.z);
         }
-        public Vector3 Subtract(Vector3 v)
+        public static Vector3 operator -(Vector3 v1, Vector3 v2)
         {
-            return new Vector3(x - v.x, y - v.y, z - v.z);
+            return new Vector3(v1.x - v2.x, v1.y - v2.y, v1.z - v2.z);
         }
-        public Vector3 Multiply(double f)
+        public static Vector3 operator *(Vector3 v, double d)
         {
-            return new Vector3(x * f, y * f, z * f);
+            return new Vector3(v.x * d, v.y * d, v.z * d);
         }
-        public Vector3 Divide(double f)
+        public static Vector3 operator /(Vector3 v, double d)
         {
-            double invf = 1 / f;
-            return new Vector3(x * invf, y * invf, z * invf);
+            double inv = 1 / d;
+            return new Vector3(v.x * inv, v.y * inv, v.z * inv);
         }
-        public double Dot(Vector3 v)
+        public static double operator ^(Vector3 v1, Vector3 v2)
         {
-            return x * v.x + y * v.y + z * v.z;
+            return v1.x * v2.x + v1.y * v2.y + v1.z * v2.z;
         }
-        public Vector3 Cross(Vector3 v)
+        public static Vector3 operator *(Vector3 v1, Vector3 v2)
         {
-            return new Vector3(-z * v.y + y * v.z, z * v.x - x * v.z, -y * v.x + x * v.y);
+            return new Vector3(-v1.z * v2.y + v1.y * v2.z,
+                v1.z * v2.x - v1.x * v2.z,
+                -v1.y * v2.x + v1.x * v2.y);
         }
 
         public static Vector3 Zero

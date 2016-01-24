@@ -24,7 +24,7 @@ namespace RayTracer.Model.ObjModels
         List<Vector3> normals = new List<Vector3>();
         Dictionary<string, Object> objects = new Dictionary<string, Object>();
         Dictionary<string, Material> materials = new Dictionary<string, Material>();
-        Materials.PhongMaterial defaultMaterial = new Materials.PhongMaterial(Model.Color.White, Model.Color.Black, 0);
+        Materials.PhongMaterial defaultMaterial = new Materials.PhongMaterial(Model.Color.Black, Model.Color.White, Model.Color.Black, 0);
 
         public ObjModel(string objModelPath)
         {

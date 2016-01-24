@@ -9,12 +9,14 @@ namespace RayTracer.Model.ObjModels
         {
             get { return vertexIndex; }
         }
+
         int textureIndex = -1;
 
         public int TextureIndex
         {
             get { return textureIndex; }
         }
+
         int normalIndex = -1;
 
         public int NormalIndex
@@ -22,11 +24,11 @@ namespace RayTracer.Model.ObjModels
             get { return normalIndex; }
         }
 
-        public FaceItem(int _vertexIndex, int _textureIndex, int _normalIndex)
+        public FaceItem(int vertexIndex, int textureIndex, int normalIndex)
         {
-            vertexIndex = _vertexIndex;
-            textureIndex = _textureIndex;
-            normalIndex = _normalIndex;
+            this.vertexIndex = vertexIndex;
+            this.textureIndex = textureIndex;
+            this.normalIndex = normalIndex;
         }
     }
 }

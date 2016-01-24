@@ -23,10 +23,10 @@ namespace RayTracer.Model.Lights
             get { return irradiance; }
         }
 
-        public LightSample(Vector3 _vector, Color _irradiance)
+        public LightSample(Vector3 vector, Color irradiance)
         {
-            vector = _vector;
-            irradiance = _irradiance;
+            this.vector = vector;
+            this.irradiance = irradiance;
         }
 
         public static LightSample Zero

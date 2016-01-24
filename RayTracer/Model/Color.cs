@@ -10,12 +10,14 @@ namespace RayTracer.Model
         {
             get { return r; }
         }
+
         double g;
 
         public double G
         {
             get { return g; }
         }
+
         double b;
 
         public double B
@@ -23,23 +25,27 @@ namespace RayTracer.Model
             get { return b; }
         }
 
-        public Color(double _r, double _g, double _b)
+        public Color(double r, double g, double b)
         {
-            r = _r;
-            g = _g;
-            b = _b;
+            this.r = r;
+            this.g = g;
+            this.b = b;
         }
-        public Color Add(Color c)
+        public static Color operator -(Color c)
         {
-            return new Color(r + c.r, g + c.g, b + c.b);
+            return new Color(-c.r, -c.g, -c.b);
         }
-        public Color Multiply(double s)
+        public static Color operator +(Color c1, Color c2)
         {
-            return new Color(r * s, g * s, b * s);
+            return new Color(c1.r + c2.r, c1.g + c2.g, c1.b + c2.b);
         }
-        public Color Modulate(Color c)
+        public static Color operator *(Color c1, double d)
         {
-            return new Color(r * c.r, g * c.g, b * c.b);
+            return new Color(c1.r * d, c1.g * d, c1.b * d);
+        }
+        public static Color operator *(Color c1, Color c2)
+        {
+            return new Color(c1.r * c2.r, c1.g * c2.g, c1.b * c2.b);
         }
         public void Saturate()
         {

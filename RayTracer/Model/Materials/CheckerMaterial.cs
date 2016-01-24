@@ -7,10 +7,10 @@ namespace RayTracer.Model.Materials
     {
         double scale;
 
-        public CheckerMaterial(double _scale, double _reflectiveness = 0)
-            : base(_reflectiveness)
+        public CheckerMaterial(double scale, double reflectiveness = 0)
+            : base(reflectiveness)
         {
-            scale = _scale;
+            this.scale = scale;
         }
         public override Color Sample(Ray3 ray, Vector3 normal, Vector3 position, LightSample lightSample)
         {

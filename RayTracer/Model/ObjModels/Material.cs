@@ -82,9 +82,9 @@ namespace RayTracer.Model.ObjModels
             set { specularTexture = value; }
         }
 
-        public Material(string _name)
+        public Material(string name)
         {
-            name = _name;
+            this.name = name;
             shininess = 10.0;
             transparency = 1.0;
             illumination = 2;

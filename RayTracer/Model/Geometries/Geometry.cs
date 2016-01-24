@@ -11,9 +11,9 @@ namespace RayTracer.Model.Geometries
             get { return material; }
         }
 
-        public Geometry(Material _material = null)
+        public Geometry(Material material = null)
         {
-            material = _material;
+            this.material = material;
         }
         public virtual void Initialize()
         {
