@@ -103,7 +103,7 @@ namespace RayTracer.Model
                     double reflectiveness = result.Geometry.Material.Reflectiveness;
                     foreach (LightSample lightSample in lightSamples)
                     {
-                        color = color + result.Geometry.Material.Sample(ray, result.Normal, result.Position, lightSample);
+                        color = color + result.Geometry.Material.Sample(ray, lightSample, result.Normal, result.Position, result.TextureCoordinates);
                     }
                     color = color * (1 - reflectiveness);
 

@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using RayTracer.Model.Geometries;
+using RayTracer.Model.Materials;
 
 namespace RayTracer.Model.ObjModels
 {
@@ -20,10 +21,10 @@ namespace RayTracer.Model.ObjModels
         }
 
         List<Vector3> vertices = new List<Vector3>();
-        List<Texture> textures = new List<Texture>();
+        List<Vector2> textures = new List<Vector2>();
         List<Vector3> normals = new List<Vector3>();
         Dictionary<string, Object> objects = new Dictionary<string, Object>();
-        Dictionary<string, Material> materials = new Dictionary<string, Material>();
+        Dictionary<string, PhongMaterial> materials = new Dictionary<string, PhongMaterial>();
         Materials.PhongMaterial defaultMaterial = new Materials.PhongMaterial(Model.Color.Black, Model.Color.White, Model.Color.Black, 0);
 
         public ObjModel(string objModelPath)
@@ -46,7 +47,9 @@ namespace RayTracer.Model.ObjModels
             string objModelFolder = Path.GetDirectoryName(objModelPath) ?? string.Empty;
             string line = null;
             string lastObjectName = null;
-            string lastObjectMaterial = null;
+            string lastObjectMaterial = "defaultMaterial";
+            materials[lastObjectMaterial] = defaultMaterial;
+
             var streamReader = new StreamReader(objModelPath);
 
             while ((line = streamReader.ReadLine()) != null)
@@ -96,7 +99,7 @@ namespace RayTracer.Model.ObjModels
                     double x, y;
                     if (double.TryParse(s[1], out x) && double.TryParse(s[2], out y))
                     {
-                        textures.Add(new Texture(x, y));
+                        textures.Add(new Vector2(x, y));
                     }
                     else
                     {
@@ -232,7 +235,7 @@ namespace RayTracer.Model.ObjModels
                     #region new material
                     string materialName = string.Join(" ", s.Skip(1));
                     lastMaterialName = materialName;
-                    materials[lastMaterialName] = new Material(lastMaterialName);
+                    materials[lastMaterialName] = new PhongMaterial(lastMaterialName);
                     #endregion
                 }
                 else if ((s[0] == "Ka" || s[0] == "Kd" || s[0] == "Ks") && s.Length >= 4)
@@ -243,7 +246,7 @@ namespace RayTracer.Model.ObjModels
                         Console.WriteLine("Cannot found material: " + line + ".");
                         continue;
                     }
-                    Material material = materials[lastMaterialName];
+                    PhongMaterial material = materials[lastMaterialName];
                     double r, g, b;
                     if (double.TryParse(s[1], out r) && double.TryParse(s[2], out g) && double.TryParse(s[3], out b))
                     {
@@ -274,7 +277,7 @@ namespace RayTracer.Model.ObjModels
                         Console.WriteLine("Cannot found material: " + line + ".");
                         continue;
                     }
-                    Material material = materials[lastMaterialName];
+                    PhongMaterial material = materials[lastMaterialName];
                     double ns;
                     if (double.TryParse(s[1], out ns))
                     {
@@ -294,7 +297,7 @@ namespace RayTracer.Model.ObjModels
                         Console.WriteLine("Cannot found material: " + line + ".");
                         continue;
                     }
-                    Material material = materials[lastMaterialName];
+                    PhongMaterial material = materials[lastMaterialName];
                     double transparency;
                     if (double.TryParse(s[1], out transparency))
                     {
@@ -314,7 +317,7 @@ namespace RayTracer.Model.ObjModels
                         Console.WriteLine("Cannot found material: " + line + ".");
                         continue;
                     }
-                    Material material = materials[lastMaterialName];
+                    PhongMaterial material = materials[lastMaterialName];
                     int illum;
                     if (int.TryParse(s[1], out illum))
                     {
@@ -334,7 +337,7 @@ namespace RayTracer.Model.ObjModels
                         Console.WriteLine("Cannot found material: " + line + ".");
                         continue;
                     }
-                    Material material = materials[lastMaterialName];
+                    PhongMaterial material = materials[lastMaterialName];
                     // TODO: skip option parameters
                     string texturePath = Path.Combine(objMaterialFolder, s[s.Length - 1]);
                     if (s[0] == "map_Ka")
@@ -369,26 +372,31 @@ namespace RayTracer.Model.ObjModels
                 {
                     if (face.FaceItems.Count == 3)
                     {
-                        Vector3 a = vertices[face.FaceItems[0].VertexIndex];
-                        Vector3 b = vertices[face.FaceItems[1].VertexIndex];
-                        Vector3 c = vertices[face.FaceItems[2].VertexIndex];
-                        int n1Index = face.FaceItems[0].NormalIndex;
-                        int n2Index = face.FaceItems[1].NormalIndex;
-                        int n3Index = face.FaceItems[2].NormalIndex;
-                        Triangle triangle;
-                        if (n1Index >= 0 && n2Index >= 0 && n3Index >= 0)
+                        List<Vector3> v = new List<Vector3>();
+                        List<Vector3> n = new List<Vector3>();
+                        List<Vector2> t = new List<Vector2>();
+                        for (int i = 0; i < 3; ++i)
                         {
-                            Vector3 n1 = normals[n1Index];
-                            Vector3 n2 = normals[n2Index];
-                            Vector3 n3 = normals[n3Index];
-                            triangle = new Triangle(a, n1, b, n2, c, n3, defaultMaterial);
-                            // materials[face.MaterialName]
+                            int index = face.FaceItems[i].VertexIndex;
+                            v.Add(index >= 0 && index < vertices.Count ? vertices[index] : null);
+                            index = face.FaceItems[i].NormalIndex;
+                            n.Add(index >= 0 && index < normals.Count ? normals[index] : null);
+                            index = face.FaceItems[i].TextureIndex;
+                            t.Add(index >= 0 && index < textures.Count ? textures[index] : null);
+                        }
+                        if (v[0] == null || v[1] == null || v[2] == null)
+                        {
+                            Console.WriteLine("Triangle face vertex error.");
                         }
                         else
                         {
-                            triangle = new Triangle(a, b, c, defaultMaterial);
+                            if (n[0] == null || n[1] == null || n[2] == null)
+                                n = null;
+                            if (t[0] == null || t[1] == null || t[2] == null)
+                                t = null;
+                            Triangle triangle = new Triangle(v, n, t, materials[face.MaterialName]);
+                            triangles.Add(triangle);
                         }
-                        triangles.Add(triangle);
                     }
                     else
                     {

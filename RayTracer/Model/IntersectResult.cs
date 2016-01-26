@@ -33,6 +33,14 @@ namespace RayTracer.Model
             get { return normal; }
         }
 
+        Vector2 textureCoordinates;
+
+        public Vector2 TextureCoordinates
+        {
+            get { return textureCoordinates; }
+            set { textureCoordinates = value; }
+        }
+
         public IntersectResult(Geometry geometry, double distance, Vector3 position, Vector3 normal)
         {
             this.geometry = geometry;
@@ -40,6 +48,7 @@ namespace RayTracer.Model
             this.position = position;
             this.normal = normal;
         }
+
         public Color GetDepthColor(int maxDepth = 20)
         {
             if (geometry == null)

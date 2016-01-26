@@ -28,6 +28,9 @@ namespace RayTracer.Model.Geometries
                     Vector3 position = ray.GetPoint(distance);
                     Vector3 normal = (position - center).Normalize();
                     IntersectResult result = new IntersectResult(this, distance, position, normal);
+                    result.TextureCoordinates = new Vector2(
+                        (Math.PI + Math.Atan2(position.Z - center.Z, position.X - center.X)) / (Math.PI * 2),
+                        1.0 - ((Math.PI / 2) + Math.Asin((position.Y - center.Y) / radius)) / Math.PI);
                     return result;
                 }
             }

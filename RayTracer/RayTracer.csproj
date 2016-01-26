@@ -73,12 +73,11 @@
     <Compile Include="Model\MultiThreadImage.cs" />
     <Compile Include="Model\ObjModels\Face.cs" />
     <Compile Include="Model\ObjModels\FaceItem.cs" />
-    <Compile Include="Model\ObjModels\ImageTexture.cs" />
-    <Compile Include="Model\ObjModels\Material.cs" />
+    <Compile Include="Model\Materials\ImageTexture.cs" />
     <Compile Include="Model\ObjModels\ObjModel.cs" />
     <Compile Include="Model\ObjModels\Object.cs" />
     <Compile Include="Model\Geometries\Octree.cs" />
-    <Compile Include="Model\ObjModels\Texture.cs" />
+    <Compile Include="Model\Vector2.cs" />
     <Compile Include="Model\Geometries\Triangle.cs" />
     <Compile Include="Model\PerspectiveCamera.cs" />
     <Compile Include="Model\Materials\PhongMaterial.cs" />
@@ -105,6 +104,12 @@
     <None Include="models\dinosaur.2k.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="models\male02\male02.mtl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="models\male02\male02.obj">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -115,7 +120,17 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Content Include="models\male02\01_-_Default1noCulling.JPG">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="models\male02\male-02-1noCulling.JPG">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="models\male02\orig_02_-_Defaul1noCulling.JPG">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

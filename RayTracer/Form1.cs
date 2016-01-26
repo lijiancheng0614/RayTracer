@@ -22,6 +22,7 @@ namespace RayTracer
             if (width <= 0 || height <= 0)
                 return;
             int state = comboBox1.SelectedIndex + 1;
+            label3.Text = "Drawing...";
             EventHandler taskEndEventHandler = new EventHandler(RenderDone);
             switch (state)
             {
@@ -58,6 +59,9 @@ namespace RayTracer
                 case 11:
                     Config.TestObjModelOctreeMultiThread(width, height, taskEndEventHandler);
                     break;
+                case 12:
+                    Config.TestMtl(width, height, taskEndEventHandler);
+                    break;
                 default:
                     break;
             }
@@ -70,6 +74,7 @@ namespace RayTracer
             int height = size.Height;
             if (width <= 0 || height <= 0)
                 return;
+            pictureBox1.Size = size;
             pictureBox1.Image = new Bitmap(width, height);
         }
 
@@ -96,6 +101,7 @@ namespace RayTracer
         {
             RenderEventArgs renderEventArgs = (RenderEventArgs)e;
             pictureBox1.Image = renderEventArgs.Image;
+            pictureBox1.Size = pictureBox1.Image.Size;
             label3.Text = "Done in " + renderEventArgs.RenderTime.ToString() + " s.";
         }
 

@@ -12,7 +12,7 @@ namespace RayTracer.Model.Materials
         {
             this.scale = scale;
         }
-        public override Color Sample(Ray3 ray, Vector3 normal, Vector3 position, LightSample lightSample)
+        public override Color Sample(Ray3 ray, LightSample lightSample, Vector3 normal, Vector3 position, Vector2 textureCoordinates = null)
         {
             // white square emits white light.
             double d = Math.Abs((Math.Floor(position.X * scale) + Math.Floor(position.Z * scale)));

@@ -2,7 +2,7 @@
 
 namespace RayTracer.Model.Lights
 {
-    class Light
+    abstract class Light
     {
         public virtual void Initialize()
         {

@@ -2,7 +2,7 @@
 
 namespace RayTracer.Model.Materials
 {
-    class Material
+    abstract class Material
     {
         double reflectiveness;
 
@@ -15,9 +15,7 @@ namespace RayTracer.Model.Materials
         {
             this.reflectiveness = reflectiveness;
         }
-        public virtual Color Sample(Ray3 ray, Vector3 normal, Vector3 position, LightSample lightSample)
-        {
-            return Color.Black;
-        }
+
+        public abstract Color Sample(Ray3 ray, LightSample lightSample, Vector3 normal, Vector3 position, Vector2 textureCoordinates = null);
     }
 }

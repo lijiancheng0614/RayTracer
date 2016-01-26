@@ -1,5 +1,6 @@
-﻿using RayTracer.Model.Materials;
-using System;
+﻿using System;
+using System.Collections.Generic;
+using RayTracer.Model.Materials;
 
 namespace RayTracer.Model.Geometries
 {
@@ -19,43 +20,26 @@ namespace RayTracer.Model.Geometries
             }
         }
 
-        Vector3 a;
-        Vector3 b;
-        Vector3 c;
-        Vector3 n1;
-        Vector3 n2;
-        Vector3 n3;
+        List<Vector3> vertices;
+        List<Vector3> normals;
+        List<Vector2> textures;
 
         Vector3 edgeAB;
         Vector3 edgeAC;
         Vector3 normal;
-        bool hasVertexNormals = false;
 
-        public Triangle(Vector3 a, Vector3 b, Vector3 c, Material material = null)
+        public Triangle(List<Vector3> vertices, List<Vector3> normals, List<Vector2> textures, Material material = null)
             : base(material)
         {
-            this.a = a;
-            this.b = b;
-            this.c = c;
-            hasVertexNormals = false;
-        }
-
-        public Triangle(Vector3 a, Vector3 n1, Vector3 b, Vector3 n2, Vector3 c, Vector3 n3, Material material = null)
-            : base(material)
-        {
-            this.a = a;
-            this.b = b;
-            this.c = c;
-            this.n1 = n1;
-            this.n2 = n2;
-            this.n3 = n3;
-            hasVertexNormals = true;
+            this.vertices = vertices;
+            this.normals = normals;
+            this.textures = textures;
         }
 
         public override void Initialize()
         {
-            edgeAB = b - a;
-            edgeAC = c - a;
+            edgeAB = vertices[1] - vertices[0];
+            edgeAC = vertices[2] - vertices[0];
             normal = (edgeAB * edgeAC).Normalize();
         }
 
@@ -70,7 +54,7 @@ namespace RayTracer.Model.Geometries
                 return IntersectResult.NoHit();
             if (normal.SqrLength() == 0)
                 return IntersectResult.NoHit();
-            Vector3 w0 = ray.Origin - a;
+            Vector3 w0 = ray.Origin - vertices[0];
             double x = -normal ^ w0;
             double y = normal ^ ray.Direction;
             double distance = x / y;
@@ -80,7 +64,7 @@ namespace RayTracer.Model.Geometries
             double uu = edgeAB ^ edgeAB;
             double uv = edgeAB ^ edgeAC;
             double vv = edgeAC ^ edgeAC;
-            Vector3 w = position - a;
+            Vector3 w = position - vertices[0];
             double wu = w ^ (edgeAB);
             double wv = w ^ (edgeAC);
             double D = uv * uv - uu * vv;
@@ -92,24 +76,38 @@ namespace RayTracer.Model.Geometries
                 return IntersectResult.NoHit();
             double alpha = 1 - beta - gamma;
             Vector3 newNormal = normal;
-            if (distance > 0 && hasVertexNormals)
+            if (distance > 0 && normals != null)
             {
-                Vector3 n1Interpolated = n1 * alpha;
-                Vector3 n2Interpolated = n2 * beta;
-                Vector3 n3Interpolated = n3 * gamma;
+                Vector3 n1Interpolated = normals[0] * alpha;
+                Vector3 n2Interpolated = normals[1] * beta;
+                Vector3 n3Interpolated = normals[2] * gamma;
                 newNormal = n1Interpolated + n2Interpolated + n3Interpolated;
             }
-            return new IntersectResult(this, distance, position, newNormal);
+            IntersectResult result = new IntersectResult(this, distance, position, newNormal);
+            if (textures != null)
+            {
+                Vector2 t1Interpolated = textures[0] * alpha;
+                Vector2 t2Interpolated = textures[1] * beta;
+                Vector2 t3Interpolated = textures[2] * gamma;
+                result.TextureCoordinates = t1Interpolated + t2Interpolated + t3Interpolated;
+            }
+            return result;
         }
 
         private Box GetBoundingBox()
         {
-            double minX = Math.Min(a.X, Math.Min(b.X, c.X));
-            double maxX = Math.Max(a.X, Math.Max(b.X, c.X));
-            double minY = Math.Min(a.Y, Math.Min(b.Y, c.Y));
-            double maxY = Math.Max(a.Y, Math.Max(b.Y, c.Y));
-            double minZ = Math.Min(a.Z, Math.Min(b.Z, c.Z));
-            double maxZ = Math.Max(a.Z, Math.Max(b.Z, c.Z));
+            double minX = vertices[0].X, maxX = vertices[0].X;
+            double minY = vertices[0].Y, maxY = vertices[0].Y;
+            double minZ = vertices[0].Z, maxZ = vertices[0].Z;
+            for (int i = 1; i < 3; ++i)
+            {
+                minX = Math.Min(minX, vertices[i].X);
+                maxX = Math.Max(maxX, vertices[i].X);
+                minY = Math.Min(minY, vertices[i].Y);
+                maxY = Math.Max(maxY, vertices[i].Y);
+                minZ = Math.Min(minZ, vertices[i].Z);
+                maxZ = Math.Max(maxZ, vertices[i].Z);
+            }
             return new Box(minX, maxX, minY, maxY, minZ, maxZ);
         }
     }

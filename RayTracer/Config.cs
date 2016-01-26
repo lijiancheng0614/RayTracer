@@ -173,5 +173,26 @@ namespace RayTracer
             scene.Initialize();
             scene.GetImage(width, height, taskEndEventHandler, 8);
         }
+
+        public static void TestMtl(int width, int height, EventHandler taskEndEventHandler)
+        {
+            UnionGeometry geometries = new UnionGeometry();
+            geometries.Add(new Plane(new Vector3(0, 1, 0), 0, new PhongMaterial(Model.Color.Black, Model.Color.White, Model.Color.Black, 0)));
+            geometries.Add(new Plane(new Vector3(1, 0, 1).Normalize(), -40, new PhongMaterial(Model.Color.Black, Model.Color.White, Model.Color.Black, 0)));
+            geometries.Add(new Plane(new Vector3(-1, 0, 1).Normalize(), -40, new PhongMaterial(Model.Color.Black, Model.Color.White, Model.Color.Black, 0)));
+            ObjModel objModel = new ObjModel("models/male02/male02.obj");
+            Octree octree = new Octree(objModel.Triangles);
+            geometries.Add(octree);
+            Vector3 eye = new Vector3(-223.999146, 162.986465, 305.502930);
+            Vector3 front = new Vector3(0.575724, -0.184038, -0.796663);
+            Vector3 up = new Vector3(0.106187, 0.982921, -0.150301);
+            PerspectiveCamera camera = new PerspectiveCamera(eye, front, up, 30);
+            UnionLight lights = new UnionLight();
+            lights.Add(new DirectionalLight(Model.Color.White, new Vector3(0, -1, -1), false));
+            lights.Add(new PointLight(Model.Color.White * 1000, new Vector3(100, 200, 50)));
+            Scene scene = new Scene(geometries, lights, camera);
+            scene.Initialize();
+            scene.GetImage(width, height, taskEndEventHandler, 8);
+        }
     }
 }

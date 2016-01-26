@@ -2,7 +2,7 @@
 
 namespace RayTracer.Model.Geometries
 {
-    class Geometry
+    abstract class Geometry
     {
         Material material;
 
@@ -15,12 +15,11 @@ namespace RayTracer.Model.Geometries
         {
             this.material = material;
         }
+        
         public virtual void Initialize()
         {
         }
-        public virtual IntersectResult Intersect(Ray3 ray)
-        {
-            return IntersectResult.NoHit();
-        }
+        
+        public abstract IntersectResult Intersect(Ray3 ray);
     }
 }

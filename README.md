@@ -76,3 +76,9 @@ Render time: about 3.8s.
 Render time: about 2.3s.
 
 ![TestObjModel](./Images/TestObjModel.png)
+
+### TestMtl
+
+Render time: about 2.8s.
+
+![TestMtl](./Images/TestMtl.png)
