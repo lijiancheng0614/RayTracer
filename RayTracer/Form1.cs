@@ -100,8 +100,8 @@ namespace RayTracer
         private void RenderDone(object sender, EventArgs e)
         {
             RenderEventArgs renderEventArgs = (RenderEventArgs)e;
+            pictureBox1.Size = renderEventArgs.Image.Size;
             pictureBox1.Image = renderEventArgs.Image;
-            pictureBox1.Size = pictureBox1.Image.Size;
             label3.Text = "Done in " + renderEventArgs.RenderTime.ToString() + " s.";
         }
 

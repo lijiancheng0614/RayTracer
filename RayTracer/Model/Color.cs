@@ -47,16 +47,12 @@ namespace RayTracer.Model
         {
             return new Color(c1.r * c2.r, c1.g * c2.g, c1.b * c2.b);
         }
-        public void Saturate()
-        {
-            r = Math.Max(Math.Min(r, 1), 0);
-            g = Math.Max(Math.Min(g, 1), 0);
-            b = Math.Max(Math.Min(b, 1), 0);
-        }
         public System.Drawing.Color GetSystemColor()
         {
-            this.Saturate();
-            return System.Drawing.Color.FromArgb(255, (int)(R * 255), (int)(G * 255), (int)(B * 255));
+            int rr = Math.Max(Math.Min((int)(r * 255), 255), 0);
+            int gg = Math.Max(Math.Min((int)(g * 255), 255), 0);
+            int bb = Math.Max(Math.Min((int)(b * 255), 255), 0);
+            return System.Drawing.Color.FromArgb(255, rr, gg, bb);
         }
 
         public static Color Black

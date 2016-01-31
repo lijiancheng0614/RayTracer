@@ -9,14 +9,16 @@ namespace RayTracer
 {
     class Config
     {
+        static PhongMaterial WallMaterial = new PhongMaterial(Model.Color.Black, new Model.Color(0.64, 0.64, 0.64), new Model.Color(0.5, 0.5, 0.5), 96.078431);
+        static PhongMaterial FloorMaterial = new PhongMaterial(Model.Color.Black, new Model.Color(0.64, 0.64, 0.64), new Model.Color(0.5, 0.5, 0.5), 96.078431, 0.2);
         static UnionGeometry DefaultGeometries
         {
             get
             {
                 UnionGeometry geometries = new UnionGeometry();
-                geometries.Add(new Plane(new Vector3(0, 1, 0), 0, new PhongMaterial(Model.Color.Black, Model.Color.White, Model.Color.Black, 0)));
-                geometries.Add(new Plane(new Vector3(0, 0, 1), -50, new PhongMaterial(Model.Color.Black, Model.Color.White, Model.Color.Black, 0)));
-                geometries.Add(new Plane(new Vector3(1, 0, 0), -20, new PhongMaterial(Model.Color.Black, Model.Color.White, Model.Color.Black, 0)));
+                geometries.Add(new Plane(new Vector3(0, 1, 0), 0, WallMaterial));
+                geometries.Add(new Plane(new Vector3(0, 0, 1), -50, WallMaterial));
+                geometries.Add(new Plane(new Vector3(1, 0, 0), -20, FloorMaterial));
                 geometries.Add(new Sphere(new Vector3(0, 10, -10), 10, new PhongMaterial(Model.Color.Black, Model.Color.White, Model.Color.Black, 0)));
                 return geometries;
             }
@@ -48,7 +50,7 @@ namespace RayTracer
             UnionLight lights = new UnionLight();
             Scene scene = new Scene(geometries, lights, DefaultCamera);
             scene.Initialize();
-            scene.GetImage(width, height, taskEndEventHandler, 1, true);
+            scene.GetImage(width, height, taskEndEventHandler, 8, true);
         }
 
         public static void TestMaterial(int width, int height, EventHandler taskEndEventHandler)
@@ -60,7 +62,7 @@ namespace RayTracer
             PerspectiveCamera camera = new PerspectiveCamera(new Vector3(0, 5, 15), new Vector3(0, 0, -1), new Vector3(0, 1, 0), 90);
             Scene scene = new Scene(geometries, DefaultLight, camera);
             scene.Initialize();
-            scene.GetImage(width, height, taskEndEventHandler);
+            scene.GetImage(width, height, taskEndEventHandler, 8);
         }
 
         public static void TestRayTracing(int width, int height, EventHandler taskEndEventHandler)
@@ -72,7 +74,7 @@ namespace RayTracer
             PerspectiveCamera camera = new PerspectiveCamera(new Vector3(0, 5, 15), new Vector3(0, 0, -1), new Vector3(0, 1, 0), 90);
             Scene scene = new Scene(geometries, DefaultLight, camera);
             scene.Initialize();
-            scene.GetImage(width, height, taskEndEventHandler, 1, false, 3);
+            scene.GetImage(width, height, taskEndEventHandler, 8, false, 3);
         }
 
         public static void TestDirectionalLight(int width, int height, EventHandler taskEndEventHandler)
@@ -90,7 +92,7 @@ namespace RayTracer
             lights.Add(new PointLight(Model.Color.White * 2000, new Vector3(30, 40, 20)));
             Scene scene = new Scene(DefaultGeometries, lights, DefaultCamera);
             scene.Initialize();
-            scene.GetImage(width, height, taskEndEventHandler);
+            scene.GetImage(width, height, taskEndEventHandler, 8, false, 3);
         }
 
         public static void TestSpotLight(int width, int height, EventHandler taskEndEventHandler)
@@ -99,7 +101,7 @@ namespace RayTracer
             lights.Add(new SpotLight(Model.Color.White * 2000, new Vector3(30, 40, 20), new Vector3(-1, -1, -1), 20, 30, 0.5));
             Scene scene = new Scene(DefaultGeometries, lights, DefaultCamera);
             scene.Initialize();
-            scene.GetImage(width, height, taskEndEventHandler);
+            scene.GetImage(width, height, taskEndEventHandler, 8, false, 3);
         }
 
         public static void TestTrichromatismLights(int width, int height, EventHandler taskEndEventHandler)
@@ -111,7 +113,7 @@ namespace RayTracer
             lights.Add(new SpotLight(Model.Color.Blue * 3000, new Vector3(-6, 30, 20), new Vector3(0, -1, -1), 20, 30, 1));
             Scene scene = new Scene(DefaultGeometries, lights, DefaultCamera);
             scene.Initialize();
-            scene.GetImage(width, height, taskEndEventHandler);
+            scene.GetImage(width, height, taskEndEventHandler, 8, false, 3);
         }
 
         public static void TestManyLights(int width, int height, EventHandler taskEndEventHandler)
@@ -124,7 +126,7 @@ namespace RayTracer
             lights.Add(fillLight);
             Scene scene = new Scene(DefaultGeometries, lights, DefaultCamera);
             scene.Initialize();
-            scene.GetImage(width, height, taskEndEventHandler);
+            scene.GetImage(width, height, taskEndEventHandler, 8, false, 3);
         }
 
 
@@ -149,7 +151,7 @@ namespace RayTracer
             }
             Scene scene = new Scene(geometries, DefaultLight, ObjCamera);
             scene.Initialize();
-            scene.GetImage(width, height, taskEndEventHandler);
+            scene.GetImage(width, height, taskEndEventHandler, 8, false, 3);
         }
 
         public static void TestObjModelOctree(int width, int height, EventHandler taskEndEventHandler)
@@ -160,7 +162,7 @@ namespace RayTracer
             geometries.Add(octree);
             Scene scene = new Scene(geometries, DefaultLight, ObjCamera);
             scene.Initialize();
-            scene.GetImage(width, height, taskEndEventHandler);
+            scene.GetImage(width, height, taskEndEventHandler, 8, false, 3);
         }
 
         public static void TestObjModelOctreeMultiThread(int width, int height, EventHandler taskEndEventHandler)
@@ -171,13 +173,13 @@ namespace RayTracer
             geometries.Add(octree);
             Scene scene = new Scene(geometries, DefaultLight, ObjCamera);
             scene.Initialize();
-            scene.GetImage(width, height, taskEndEventHandler, 8);
+            scene.GetImage(width, height, taskEndEventHandler, 8, false, 3);
         }
 
         public static void TestMtl(int width, int height, EventHandler taskEndEventHandler)
         {
             UnionGeometry geometries = new UnionGeometry();
-            geometries.Add(new Plane(new Vector3(0, 1, 0), 0, new PhongMaterial(Model.Color.Black, Model.Color.White, Model.Color.Black, 0)));
+            geometries.Add(new Plane(new Vector3(0, 1, 0), 0, FloorMaterial));
             geometries.Add(new Plane(new Vector3(1, 0, 1).Normalize(), -40, new PhongMaterial(Model.Color.Black, Model.Color.White, Model.Color.Black, 0)));
             geometries.Add(new Plane(new Vector3(-1, 0, 1).Normalize(), -40, new PhongMaterial(Model.Color.Black, Model.Color.White, Model.Color.Black, 0)));
             ObjModel objModel = new ObjModel("models/male02/male02.obj");
@@ -192,7 +194,7 @@ namespace RayTracer
             lights.Add(new PointLight(Model.Color.White * 1000, new Vector3(100, 200, 50)));
             Scene scene = new Scene(geometries, lights, camera);
             scene.Initialize();
-            scene.GetImage(width, height, taskEndEventHandler, 8);
+            scene.GetImage(width, height, taskEndEventHandler, 8, false, 3);
         }
     }
 }
