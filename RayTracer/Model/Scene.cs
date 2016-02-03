@@ -10,10 +10,6 @@ namespace RayTracer.Model
 {
     class Scene
     {
-        public enum AntiAlaising
-        {
-            None, SuperSampling, Jitter
-        };
         Random random = new Random();
         UnionGeometry geometries;
         UnionLight lights;
@@ -21,7 +17,7 @@ namespace RayTracer.Model
 
         CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
         EventHandler taskEndEventHandler;
-        AntiAlaising antiAlaising;
+        AntiAliasingMode antiAliasing;
         MultiThreadImage image;
         DateTime startDateTime;
         double renderTime;
@@ -46,7 +42,7 @@ namespace RayTracer.Model
             camera.Initialize();
         }
         public void GetImage(int width, int height, EventHandler taskEndEventHandler = null, int threadCount = 1,
-            bool depthFlag = false, int rayTracingMaxReflect = 0, AntiAlaising antiAlaising = AntiAlaising.SuperSampling)
+            bool depthFlag = false, int rayTracingMaxReflect = 0, AntiAliasingMode antiAliasing = AntiAliasingMode.SuperSampling)
         {
             this.width = width;
             this.height = height;
@@ -54,7 +50,7 @@ namespace RayTracer.Model
             this.threadCount = threadCount;
             this.depthFlag = depthFlag;
             this.rayTracingMaxReflect = rayTracingMaxReflect;
-            this.antiAlaising = antiAlaising;
+            this.antiAliasing = antiAliasing;
             image = new MultiThreadImage(new Bitmap(width, height));
             dx = 1.0 / width;
             dy = 1.0 / height;
@@ -83,69 +79,30 @@ namespace RayTracer.Model
         }
         void DoTask(int threadId, CancellationToken cancellationToken)
         {
-            switch (antiAlaising)
+            for (int y = 0; y < height; ++y)
             {
-                case AntiAlaising.None:
-                    for (int y = 0; y < height; ++y)
+                double sy = 1 - dy * y;
+                for (int x = threadId; x < width; x += threadCount)
+                {
+                    Color color;
+                    switch (antiAliasing)
                     {
-                        double sy = 1 - dy * y;
-                        for (int x = threadId; x < width; x += threadCount)
-                        {
+                        case AntiAliasingMode.None:
                             double sx = dx * x;
-                            Ray3 ray = camera.GenerateRay(sx, sy);
-                            Color color = rayTracing(ray, rayTracingMaxReflect);
-                            image.SetPixel(x, y, color.GetSystemColor());
-                        }
+                            color = rayTracing(camera.GenerateRay(sx, sy), rayTracingMaxReflect);
+                            break;
+                        case AntiAliasingMode.SuperSampling:
+                            AntiAliasing.SuperSampling superSampling = new AntiAliasing.SuperSampling();
+                            color = superSampling.GridSuperSampling(x, y, new AntiAliasing.SuperSampling.RayTracingDelegate(
+                                (xx, yy) => rayTracing(camera.GenerateRay(dx * xx, 1 - dy * yy), rayTracingMaxReflect)
+                                ));
+                            break;
+                        default:
+                            color = Color.Black;
+                            break;
                     }
-                    break;
-                case AntiAlaising.SuperSampling:
-                    for (int y = 0; y < height; ++y)
-                    {
-                        double sy = 1 - dy * (y - 0.5);
-                        double ty = 1 - dy * (y + 0.5);
-                        for (int x = threadId; x < width; x += threadCount)
-                        {
-                            double sx = dx * (x - 0.5);
-                            double tx = dx * (x + 0.5);
-                            Color color = Color.Black;
-                            Ray3[] rays = new Ray3[]{
-                                camera.GenerateRay(sx, sy),
-                                camera.GenerateRay(sx, ty),
-                                camera.GenerateRay(tx, sy),
-                                camera.GenerateRay(tx, ty),
-                            };
-                            foreach (Ray3 ray in rays)
-                                color = color + rayTracing(ray, rayTracingMaxReflect);
-                            color = color * (1.0 / rays.Length);
-                            image.SetPixel(x, y, color.GetSystemColor());
-                        }
-                    }
-                    break;
-                case AntiAlaising.Jitter:
-                    for (int y = 0; y < height; ++y)
-                    {
-                        double sy = 1 - dy * (y - random.NextDouble() * 0.5);
-                        double ty = 1 - dy * (y + random.NextDouble() * 0.5);
-                        for (int x = threadId; x < width; x += threadCount)
-                        {
-                            double sx = dx * (x - random.NextDouble() * 0.5);
-                            double tx = dx * (x + random.NextDouble() * 0.5);
-                            Color color = Color.Black;
-                            Ray3[] rays = new Ray3[]{
-                                camera.GenerateRay(sx, sy),
-                                camera.GenerateRay(sx, ty),
-                                camera.GenerateRay(tx, sy),
-                                camera.GenerateRay(tx, ty),
-                            };
-                            foreach (Ray3 ray in rays)
-                                color = color + rayTracing(ray, rayTracingMaxReflect);
-                            color = color * (1.0 / rays.Length);
-                            image.SetPixel(x, y, color.GetSystemColor());
-                        }
-                    }
-                    break;
-                default:
-                    break;
+                    image.SetPixel(x, y, color.GetSystemColor());
+                }
             }
         }
         Color rayTracing(Ray3 ray, int maxReflect)

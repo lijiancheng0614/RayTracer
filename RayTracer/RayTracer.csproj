@@ -56,6 +56,8 @@
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
     <Compile Include="Config.cs" />
+    <Compile Include="Model\AntiAliasing\AntiAliasingMode.cs" />
+    <Compile Include="Model\AntiAliasing\SuperSampling.cs" />
     <Compile Include="Model\Constant.cs" />
     <Compile Include="Model\Box.cs" />
     <Compile Include="Model\Lights\DirectionalLight.cs" />

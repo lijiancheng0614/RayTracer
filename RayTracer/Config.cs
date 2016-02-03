@@ -9,7 +9,7 @@ namespace RayTracer
 {
     class Config
     {
-        static PhongMaterial WallMaterial = new PhongMaterial(Model.Color.Black, new Model.Color(0.64, 0.64, 0.64), new Model.Color(0.5, 0.5, 0.5), 96.078431);
+        static PhongMaterial WallMaterial = new PhongMaterial(Model.Color.Black, Model.Color.White, Model.Color.Black, 0);
         static PhongMaterial FloorMaterial = new PhongMaterial(Model.Color.Black, new Model.Color(0.64, 0.64, 0.64), new Model.Color(0.5, 0.5, 0.5), 96.078431, 0.2);
         static UnionGeometry DefaultGeometries
         {
@@ -18,7 +18,7 @@ namespace RayTracer
                 UnionGeometry geometries = new UnionGeometry();
                 geometries.Add(new Plane(new Vector3(0, 1, 0), 0, WallMaterial));
                 geometries.Add(new Plane(new Vector3(0, 0, 1), -50, WallMaterial));
-                geometries.Add(new Plane(new Vector3(1, 0, 0), -20, FloorMaterial));
+                geometries.Add(new Plane(new Vector3(1, 0, 0), -20, WallMaterial));
                 geometries.Add(new Sphere(new Vector3(0, 10, -10), 10, new PhongMaterial(Model.Color.Black, Model.Color.White, Model.Color.Black, 0)));
                 return geometries;
             }
@@ -180,8 +180,8 @@ namespace RayTracer
         {
             UnionGeometry geometries = new UnionGeometry();
             geometries.Add(new Plane(new Vector3(0, 1, 0), 0, FloorMaterial));
-            geometries.Add(new Plane(new Vector3(1, 0, 1).Normalize(), -40, new PhongMaterial(Model.Color.Black, Model.Color.White, Model.Color.Black, 0)));
-            geometries.Add(new Plane(new Vector3(-1, 0, 1).Normalize(), -40, new PhongMaterial(Model.Color.Black, Model.Color.White, Model.Color.Black, 0)));
+            geometries.Add(new Plane(new Vector3(1, 0, 1).Normalize(), -40, WallMaterial));
+            geometries.Add(new Plane(new Vector3(-1, 0, 1).Normalize(), -40, WallMaterial));
             ObjModel objModel = new ObjModel("models/male02/male02.obj");
             Octree octree = new Octree(objModel.Triangles);
             geometries.Add(octree);
